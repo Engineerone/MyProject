@@ -2,6 +2,7 @@ package com.guryanov;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
@@ -12,6 +13,10 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 public class AppGUI extends JFrame {
@@ -21,11 +26,14 @@ public class AppGUI extends JFrame {
     private JButton buttonEraseDB = new JButton("Erase DB");
     private JButton buttonSaveDB = new JButton("Save to DB");
     private JButton buttondSendEmail = new JButton("Send e-mail");
-    private JTextField fieldEmailSubject = new JTextField("Email subject");
-    private JTextArea areaFileContain = new JTextArea("File contain", 30, 30);
-    private JTextArea areadEmailMessage = new JTextArea("Email text", 27, 30);
+    private JTextField fieldEmailSubject = new JTextField("My Project");
+    JTextField statusString = new JTextField("Status field", 41);
+    private JTextArea areaFileContain = new JTextArea("", 30, 30);
+    private JTextArea areadEmailMessage = new JTextArea("Hello! That my first project !", 27, 30);
     private String[] column_names = {"#", "name", "email"};
-    private JTable dbTable = new JTable(new DefaultTableModel(column_names, 25));
+
+    DefaultTableModel tableModel = new DefaultTableModel(column_names, 0);
+    private JTable dbTable = new JTable(tableModel);
     private JFileChooser fileChooser = new JFileChooser();
 
     public AppGUI() {
@@ -34,54 +42,36 @@ public class AppGUI extends JFrame {
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setJMenuBar(menu);
         menu.add(createFileMenu());
+        statusString.setEditable(false);
+        areaFileContain.setEditable(false);
 
         JPanel grid1 = new JPanel(new FlowLayout());
         grid1.add(new JScrollPane(areaFileContain));
 
-
         JPanel grid2 = new JPanel(new BorderLayout());
-
-
         JPanel grid21 = new JPanel(new FlowLayout());
         grid21.add(buttonSaveDB);
         grid21.add(buttonLoadDB);
         grid21.add(buttonEraseDB);
-        //    grid2.add(dbTable);
-
         JPanel grid22 = new JPanel(new FlowLayout());
-
-
         TableColumnModel columnModel = dbTable.getColumnModel();
-
         setJTableColumnsWidth(dbTable, 450, 10, 60, 60);
-
-
-        //        columnModel.getColumn(0).setPreferredWidth(50);
-//        columnModel.getColumn(1).setPreferredWidth(100);
-//        columnModel.getColumn(2).setPreferredWidth(100);
-//        dbTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-        //       dbTable.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
-        grid2.add(new JScrollPane(dbTable));
-
-
+        grid22.add(new JScrollPane(dbTable));
+        JPanel grid23 = new JPanel(new FlowLayout());
+        grid23.add(statusString);
         grid2.add(grid21, BorderLayout.NORTH);
-        grid2.add(grid22, BorderLayout.SOUTH);
+        grid2.add(grid22, BorderLayout.CENTER);
+        grid2.add(grid23, BorderLayout.SOUTH);
 
 
         JPanel grid3 = new JPanel(new BorderLayout());
         JPanel grid31 = new JPanel(new BorderLayout());
         JPanel grid32 = new JPanel(new BorderLayout());
-
-
         grid31.add(fieldEmailSubject, BorderLayout.NORTH);
         grid31.add(new JScrollPane(areadEmailMessage), BorderLayout.SOUTH);
-
         grid32.add(buttondSendEmail, BorderLayout.NORTH);
-
-
         grid3.add(grid31, BorderLayout.NORTH);
         grid3.add(grid32, BorderLayout.SOUTH);
-
 
         JPanel flow = new JPanel(new FlowLayout(FlowLayout.CENTER));
         flow.add(grid1);
@@ -91,41 +81,10 @@ public class AppGUI extends JFrame {
         Container container = getContentPane();
         container.add(flow);
 
-
-//        Container container = this.getContentPane();
-//        container.setLayout(new FlowLayout(FlowLayout.CENTER));
-////        container.setLayout(new GridLayout(1, 3, 2, 2));
-//
-//        container.add(fieldFileContain);
-//        container.add(dbTable);
-//        container.add(fieldEmailMessage);
-
-//        Container buttonContainer = this.getContentPane();
-//        buttonContainer.setLayout(new FlowLayout());
-//        buttonContainer.add(buttonSaveDB);
-        //  container.add(buttonContainer);
-
-//        ButtonGroup group = new ButtonGroup();
-//        group.add(buttonEraseDB);
-//        group.add(buttonSaveDB);
-//        group.add(buttondSendEmail);
-//        group.add(buttonLoadDB);
-
-
-//        container.add(buttonLoadDB);
-//        container.add(buttonEraseDB);
-//        container.add(buttonSaveDB);
-//        container.add(buttondSendEmail);
-
-        //  container.add(radio1);
-        // radio1.setSelected(true);
-        //  container.add(radio2);
-        // container.add(check);
         buttonSaveDB.addActionListener(new buttonSaveDBListener());
         buttonEraseDB.addActionListener(new buttonEraseDBListener());
         buttonLoadDB.addActionListener(new buttonLoadDBListener());
         buttondSendEmail.addActionListener(new buttonSendMailListener());
-        //   container.add(fileChooser);
     }
 
     public static void setJTableColumnsWidth(JTable table, int tablePreferredWidth,
@@ -140,7 +99,6 @@ public class AppGUI extends JFrame {
                     (tablePreferredWidth * (percentages[i] / total)));
         }
     }
-
 
     private JMenu createFileMenu() {
         JMenu file = new JMenu("File");
@@ -183,7 +141,26 @@ public class AppGUI extends JFrame {
         DatabaseHandler dbHandler = new DatabaseHandler();
 
         public void actionPerformed(ActionEvent e) {
-            dbHandler.signUpuser(areaFileContain.getText(), areaFileContain.getText());
+            String fileContainText;
+            fileContainText = areaFileContain.getText();
+            String tempString = "";
+            String name = "";
+            String email = "";
+            for (int i = 0; i < fileContainText.length() - 1; i++) {
+                if (fileContainText.charAt(i) == '\t') {
+                    name = tempString;
+                    tempString = "";
+                } else if (fileContainText.charAt(i) == '\r') {
+                    email = tempString;
+                    tempString = "";
+                    dbHandler.signUpuser(name, email);
+                } else if (fileContainText.charAt(i) == '\n') {
+                    name = "";
+                    email = "";
+                }
+                tempString += fileContainText.charAt(i);
+            }
+            statusString.setText("Save complete");
         }
     }
 
@@ -191,28 +168,34 @@ public class AppGUI extends JFrame {
         DatabaseHandler dbHandler = new DatabaseHandler();
 
         public void actionPerformed(ActionEvent e) {
-
+            tableModel.setRowCount(0);
             dbHandler.eraseDB();
+            statusString.setText("Erase complete");
         }
     }
-
 
     class buttonLoadDBListener implements ActionListener {
         DatabaseHandler dbHandler = new DatabaseHandler();
+        List<String[]> result = new ArrayList<>();
+        //Map<Integer, String[]> result = new HashMap<>();
 
         public void actionPerformed(ActionEvent e) {
-
-            dbHandler.LoadDB();
+            result = dbHandler.LoadDB();
+            tableModel.setRowCount(0);
+            for (int i = 0; i < result.size(); i++) {
+                String[] value = result.get(i);
+                tableModel.insertRow(i, new Object[]{value[0], value[1], value[2]});
+            }
+            statusString.setText("Load complete");
         }
+
     }
 
     class buttonSendMailListener implements ActionListener {
-   //     DatabaseHandler dbHandler = new DatabaseHandler();
-
+        //     DatabaseHandler dbHandler = new DatabaseHandler();
         public void actionPerformed(ActionEvent e) {
-            SendEmail mymail = new SendEmail("avguryanow@yandex.ru","My project test mail send");
+            SendEmail mymail = new SendEmail("avguryanow@yandex.ru", "My project test mail send");
             mymail.sendMessage("Hellow World !!!!!!!!!!");
-
         }
     }
 
