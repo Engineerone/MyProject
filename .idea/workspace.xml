@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7e5955f9-917d-49ec-a057-2599cd136b18" name="Changes" comment="work point 3">
+    <list default="true" id="7e5955f9-917d-49ec-a057-2599cd136b18" name="Changes" comment="work point 4">
       <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
@@ -22,6 +22,19 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">
+    <option name="selectedUrlAndAccountId">
+      <UrlAndAccount>
+        <option name="accountId" value="51c9a053-3135-4249-b9e8-3d2f22dc5ec1" />
+        <option name="url" value="https://github.com/Engineerone/MyProject.git" />
+      </UrlAndAccount>
+    </option>
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
@@ -56,9 +69,9 @@
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Libraries&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;SDKs&quot;,
     &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.35977012&quot;,
     &quot;settings.editor.selected.configurable&quot;: &quot;com.intellij.jarRepository.settings.RemoteRepositoriesConfigurable&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
@@ -102,7 +115,9 @@
       <workItem from="1675588157390" duration="23507000" />
       <workItem from="1675618680728" duration="4713000" />
       <workItem from="1675749264521" duration="2962000" />
-      <workItem from="1675753061373" duration="10444000" />
+      <workItem from="1675753061373" duration="11104000" />
+      <workItem from="1675764313403" duration="308000" />
+      <workItem from="1675764633862" duration="381000" />
     </task>
     <task id="LOCAL-00001" summary="work point 1">
       <created>1675505617833</created>
@@ -125,7 +140,21 @@
       <option name="project" value="LOCAL" />
       <updated>1675763367039</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="work point 4">
+      <created>1675763688847</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1675763688847</updated>
+    </task>
+    <task id="LOCAL-00005" summary="work point 4">
+      <created>1675764354530</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1675764354530</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -146,7 +175,8 @@
     <MESSAGE value="work point 1" />
     <MESSAGE value="work point 2" />
     <MESSAGE value="work point 3" />
-    <option name="LAST_COMMIT_MESSAGE" value="work point 3" />
+    <MESSAGE value="work point 4" />
+    <option name="LAST_COMMIT_MESSAGE" value="work point 4" />
   </component>
   <component name="XDebuggerManager">
     <watches-manager>
