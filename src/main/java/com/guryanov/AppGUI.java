@@ -25,7 +25,7 @@ public class AppGUI extends JFrame {
     private JButton buttonLoadDB = new JButton("Load from DB");
     private JButton buttonEraseDB = new JButton("Erase DB");
     private JButton buttonSaveDB = new JButton("Save to DB");
-    private JButton buttondSendEmail = new JButton("Send e-mail");
+    private JButton buttonSendEmail = new JButton("Send e-mail");
     private JTextField fieldEmailSubject = new JTextField("My Project");
     JTextField statusString = new JTextField("Status field", 41);
     private JTextArea areaFileContain = new JTextArea("", 30, 30);
@@ -42,6 +42,7 @@ public class AppGUI extends JFrame {
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setJMenuBar(menu);
         menu.add(createFileMenu());
+        menu.add(createToolMenu());
         statusString.setEditable(false);
         areaFileContain.setEditable(false);
 
@@ -69,7 +70,7 @@ public class AppGUI extends JFrame {
         JPanel grid32 = new JPanel(new BorderLayout());
         grid31.add(fieldEmailSubject, BorderLayout.NORTH);
         grid31.add(new JScrollPane(areadEmailMessage), BorderLayout.SOUTH);
-        grid32.add(buttondSendEmail, BorderLayout.NORTH);
+        grid32.add(buttonSendEmail, BorderLayout.NORTH);
         grid3.add(grid31, BorderLayout.NORTH);
         grid3.add(grid32, BorderLayout.SOUTH);
 
@@ -84,11 +85,10 @@ public class AppGUI extends JFrame {
         buttonSaveDB.addActionListener(new buttonSaveDBListener());
         buttonEraseDB.addActionListener(new buttonEraseDBListener());
         buttonLoadDB.addActionListener(new buttonLoadDBListener());
-        buttondSendEmail.addActionListener(new buttonSendMailListener());
+        buttonSendEmail.addActionListener(new buttonSendMailListener());
     }
 
-    public static void setJTableColumnsWidth(JTable table, int tablePreferredWidth,
-                                             double... percentages) {
+    public static void setJTableColumnsWidth(JTable table, int tablePreferredWidth, double... percentages) {
         double total = 0;
         for (int i = 0; i < table.getColumnModel().getColumnCount(); i++) {
             total += percentages[i];
@@ -102,40 +102,65 @@ public class AppGUI extends JFrame {
 
     private JMenu createFileMenu() {
         JMenu file = new JMenu("File");
-        JMenuItem open = new JMenuItem("Open", new ImageIcon("images/open.png"));
-        JMenuItem exit = new JMenuItem(new ExitAction());
-        exit.setIcon(new ImageIcon("images/exit.png"));
+        JMenuItem open = new JMenuItem("Open");
+        JMenuItem exit = new JMenuItem("Exit");
+
         file.add(open);
         file.addSeparator();
         file.add(exit);
-        open.addActionListener(new ActionListener() {
 
-            public void actionPerformed(ActionEvent arg0) {
-                StringBuffer buffer;
-                buffer = new StringBuffer();
-                fileChooser.setDialogTitle("Выбор директории");
-                FileNameExtensionFilter filter = new FileNameExtensionFilter("*.txt", "txt");
-                fileChooser.setFileFilter(filter);
-                fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-                int result = fileChooser.showOpenDialog(AppGUI.this);
-                if (result == JFileChooser.APPROVE_OPTION) {
-                    try (FileReader reader = new FileReader(fileChooser.getSelectedFile())) {
-                        int i = 1;
-                        while (i != -1) {
-                            i = reader.read();
-                            char ch = (char) i;
-                            buffer.append(ch);
-                        }
-                    } catch (IOException ex) {
-                        System.out.println(ex.getMessage());
-                    }
-                }
-                areaFileContain.setText(buffer.toString());
-            }
-        });
+        open.addActionListener(new menuOpenListener());
+        exit.addActionListener(new menuExitListener());
+
         return file;
     }
 
+    private JMenu createToolMenu() {
+        JMenu tool = new JMenu("Tools");
+        JMenuItem createDB = new JMenuItem("CREATE DB");
+        JMenuItem deleteDB = new JMenuItem("DELETE DB");
+        tool.add(createDB);
+        tool.addSeparator();
+        tool.add(deleteDB);
+
+        createDB.addActionListener(new menuCreateDBListener());
+        deleteDB.addActionListener(new menuDeleteDBListener());
+
+        return tool;
+    }
+
+    class menuDeleteDBListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            DatabaseHandler dbHandler = new DatabaseHandler();
+            dbHandler.dropDB();
+            statusString.setText("DB DELETED");
+        }
+    }
+
+    class menuOpenListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            StringBuffer buffer;
+            buffer = new StringBuffer();
+            fileChooser.setDialogTitle("Выбор директории");
+            FileNameExtensionFilter filter = new FileNameExtensionFilter("*.txt", "txt");
+            fileChooser.setFileFilter(filter);
+            fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+            int result = fileChooser.showOpenDialog(AppGUI.this);
+            if (result == JFileChooser.APPROVE_OPTION) {
+                try (FileReader reader = new FileReader(fileChooser.getSelectedFile())) {
+                    int i = 1;
+                    while (i != -1) {
+                        i = reader.read();
+                        char ch = (char) i;
+                        buffer.append(ch);
+                    }
+                } catch (IOException ex) {
+                    System.out.println(ex.getMessage());
+                }
+            }
+            areaFileContain.setText(buffer.toString());
+        }
+    }
 
     class buttonSaveDBListener implements ActionListener {
         DatabaseHandler dbHandler = new DatabaseHandler();
@@ -148,10 +173,10 @@ public class AppGUI extends JFrame {
             String email = "";
             for (int i = 0; i < fileContainText.length() - 1; i++) {
                 if (fileContainText.charAt(i) == '\t') {
-                    name = tempString;
+                    email = tempString;
                     tempString = "";
                 } else if (fileContainText.charAt(i) == '\r') {
-                    email = tempString;
+                    name = tempString;
                     tempString = "";
                     dbHandler.signUpuser(name, email);
                 } else if (fileContainText.charAt(i) == '\n') {
@@ -199,16 +224,17 @@ public class AppGUI extends JFrame {
         }
     }
 
-
-    class ExitAction extends AbstractAction {
-//        private static final long serialVersionUID = 1L;
-
-        ExitAction() {
-            putValue(NAME, "Exit");
-        }
-
+    class menuExitListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             System.exit(0);
+        }
+    }
+
+    class menuCreateDBListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            DatabaseHandler dbHandler = new DatabaseHandler();
+            dbHandler.createDB();
+            statusString.setText("DB CREATED");
         }
     }
 }

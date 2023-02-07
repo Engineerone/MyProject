@@ -17,6 +17,14 @@ public class DatabaseHandler extends Configs {
         return dbConnection;
     }
 
+    public Connection getDbConnectionWODB()
+            throws ClassNotFoundException, SQLException {
+        String connectionString = "jdbc:mysql://" + dbhost + ":" + dbPort;
+        Class.forName("com.mysql.cj.jdbc.Driver");
+        dbConnection = DriverManager.getConnection(connectionString, dbUser, dbPass);
+        return dbConnection;
+    }
+
     public void signUpuser(String name, String email) {
         String insert = "INSERT INTO "
                 + Const.USER_TABLE + "("
@@ -69,4 +77,49 @@ public class DatabaseHandler extends Configs {
         }
         return result;
     }
+
+    public void createDB() {
+        try {
+            String sqlQuery;
+            sqlQuery = "CREATE DATABASE projectdb";
+            PreparedStatement prSt;
+            prSt = getDbConnectionWODB().prepareStatement(sqlQuery);
+            prSt.execute();
+
+            sqlQuery = "CREATE TABLE users (" +
+                    "id int NOT NULL AUTO_INCREMENT," +
+                    "name varchar(45) NOT NULL," +
+                    "email varchar(45) NOT NULL," +
+                    "PRIMARY KEY (`id`)" +
+                    ")";
+            prSt = getDbConnection().prepareStatement(sqlQuery);
+            prSt.execute();
+
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void dropDB() {
+        String sqlQuery;
+        PreparedStatement prSt;
+
+        try {
+            sqlQuery = "DROP DATABASE projectdb";
+            prSt = getDbConnection().prepareStatement(sqlQuery);
+            prSt.execute();
+        } catch (
+                SQLException e) {
+            throw new RuntimeException(e);
+        } catch (
+                ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+
+
+    }
+
 }
