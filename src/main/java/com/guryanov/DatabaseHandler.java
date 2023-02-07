@@ -2,11 +2,9 @@ package com.guryanov;
 
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-public class DatabaseHandler extends Configs {
+public class DatabaseHandler extends MySQLConfigs {
     Connection dbConnection;
 
     public Connection getDbConnection()
@@ -27,9 +25,9 @@ public class DatabaseHandler extends Configs {
 
     public void signUpuser(String name, String email) {
         String insert = "INSERT INTO "
-                + Const.USER_TABLE + "("
-                + Const.USER_NAME + ","
-                + Const.USER_EMAIL + ")" +
+                + Constants.USER_TABLE + "("
+                + Constants.USER_NAME + ","
+                + Constants.USER_EMAIL + ")" +
                 "VALUES(?,?)";
         try {
             PreparedStatement prSt = getDbConnection().prepareStatement(insert);
@@ -44,7 +42,7 @@ public class DatabaseHandler extends Configs {
     }
 
     public void eraseDB() {
-        String eraseDB = "DELETE FROM " + Const.USER_TABLE;
+        String eraseDB = "DELETE FROM " + Constants.USER_TABLE;
         try {
             PreparedStatement prSt = getDbConnection().prepareStatement(eraseDB);
             prSt.executeUpdate();
@@ -56,7 +54,7 @@ public class DatabaseHandler extends Configs {
     }
 
     public List LoadDB() {
-        String LoadDB = "SELECT * FROM " + Const.USER_TABLE + " ORDER BY id";
+        String LoadDB = "SELECT * FROM " + Constants.USER_TABLE + " ORDER BY id";
         List<String[]> result = new ArrayList<>();
         //Map<Integer, String[]> result = new HashMap<>();
         try {

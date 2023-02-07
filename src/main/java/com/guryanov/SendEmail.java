@@ -6,11 +6,11 @@ import java.util.Properties;
 
 public class SendEmail {
     private Message message = null;
-    protected static String SMTP_SERVER = Const.SMTP_SERVER;
-    protected static String SMTP_Port = Const.SMTP_Port;
-    protected static String SMTP_AUTH_USER = Const.SMTP_AUTH_USER;
-    protected static String SMTP_AUTH_PWD = Const.SMTP_AUTH_PWD;
-    protected static String EMAIL_FROM = Const.EMAIL_FROM;
+    protected static String SMTP_SERVER = Constants.SMTP_SERVER;
+    protected static String SMTP_Port = Constants.SMTP_Port;
+    protected static String SMTP_AUTH_USER = Constants.SMTP_AUTH_USER;
+    protected static String SMTP_AUTH_PWD = Constants.SMTP_AUTH_PWD;
+    protected static String EMAIL_FROM = Constants.EMAIL_FROM;
     protected static String FILE_PATH = null;
     protected static String REPLY_TO = null;
 

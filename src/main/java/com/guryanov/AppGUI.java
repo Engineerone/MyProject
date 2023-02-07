@@ -9,10 +9,7 @@ import javax.swing.table.TableColumnModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -147,12 +144,11 @@ public class AppGUI extends JFrame {
             fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
             int result = fileChooser.showOpenDialog(AppGUI.this);
             if (result == JFileChooser.APPROVE_OPTION) {
-                try (FileReader reader = new FileReader(fileChooser.getSelectedFile())) {
-                    int i = 1;
-                    while (i != -1) {
-                        i = reader.read();
-                        char ch = (char) i;
-                        buffer.append(ch);
+                try (BufferedReader reader = new BufferedReader(new FileReader(fileChooser.getSelectedFile()))) {
+                    String fileString;
+                    while (reader.ready()) {
+                        fileString = reader.readLine() + "\n";
+                        buffer.append(fileString);
                     }
                 } catch (IOException ex) {
                     System.out.println(ex.getMessage());
@@ -166,24 +162,21 @@ public class AppGUI extends JFrame {
         DatabaseHandler dbHandler = new DatabaseHandler();
 
         public void actionPerformed(ActionEvent e) {
-            String fileContainText;
-            fileContainText = areaFileContain.getText();
+            String areaFileContainString = areaFileContain.getText();
+            String name;
+            String email;
             String tempString = "";
-            String name = "";
-            String email = "";
-            for (int i = 0; i < fileContainText.length() - 1; i++) {
-                if (fileContainText.charAt(i) == '\t') {
-                    email = tempString;
-                    tempString = "";
-                } else if (fileContainText.charAt(i) == '\r') {
-                    name = tempString;
+
+            for (int i = 0; i < areaFileContainString.length(); i++) {
+                if (areaFileContainString.charAt(i) != '\n') {
+                    tempString += areaFileContainString.charAt(i);
+                } else {
+                    int tabStatement = tempString.indexOf('\t');
+                    email = tempString.substring(0, tabStatement);
+                    name = tempString.substring(tabStatement + 1, tempString.length());
                     tempString = "";
                     dbHandler.signUpuser(name, email);
-                } else if (fileContainText.charAt(i) == '\n') {
-                    name = "";
-                    email = "";
                 }
-                tempString += fileContainText.charAt(i);
             }
             statusString.setText("Save complete");
         }
