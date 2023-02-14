@@ -22,6 +22,8 @@ public class AppGUI extends JFrame {
     private JButton buttonLoadDB = new JButton("Load from DB");
     private JButton buttonEraseDB = new JButton("Erase DB");
     private JButton buttonSaveDB = new JButton("Save to DB");
+
+    private JCheckBox checkBox = new JCheckBox("save including duplicates");
     private JButton buttonSendEmail = new JButton("Send e-mail");
     private JTextField fieldEmailSubject = new JTextField("My Project");
     JTextField statusString = new JTextField("Status field", 41);
@@ -49,8 +51,10 @@ public class AppGUI extends JFrame {
         JPanel grid2 = new JPanel(new BorderLayout());
         JPanel grid21 = new JPanel(new FlowLayout());
         grid21.add(buttonSaveDB);
+        grid21.add(checkBox);
         grid21.add(buttonLoadDB);
         grid21.add(buttonEraseDB);
+
         JPanel grid22 = new JPanel(new FlowLayout());
         TableColumnModel columnModel = dbTable.getColumnModel();
         setJTableColumnsWidth(dbTable, 450, 10, 60, 60);
@@ -79,10 +83,64 @@ public class AppGUI extends JFrame {
         Container container = getContentPane();
         container.add(flow);
 
-        buttonSaveDB.addActionListener(new buttonSaveDBListener());
-        buttonEraseDB.addActionListener(new buttonEraseDBListener());
-        buttonLoadDB.addActionListener(new buttonLoadDBListener());
-        buttonSendEmail.addActionListener(new buttonSendMailListener());
+        buttonSaveDB.addActionListener(new buttonHandler() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                DatabaseHandler dbHandler = new DatabaseHandler();
+                String areaFileContainString = areaFileContain.getText();
+                String name;
+                String email;
+                String tempString = "";
+
+                for (int i = 0; i < areaFileContainString.length(); i++) {
+                    if (areaFileContainString.charAt(i) != '\n') {
+                        tempString += areaFileContainString.charAt(i);
+                    } else {
+                        int tabStatement = tempString.indexOf('\t');
+                        email = tempString.substring(0, tabStatement);
+                        name = tempString.substring(tabStatement + 1);
+                        tempString = "";
+                        if (checkBox.isSelected()) {
+                            dbHandler.updateRow(name, email);
+                        } else {
+                            dbHandler.signUpuser(name, email);
+                        }
+                    }
+                }
+                statusString.setText("Save complete");
+            }
+        });
+        buttonEraseDB.addActionListener(new buttonHandler() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                DatabaseHandler dbHandler = new DatabaseHandler();
+                tableModel.setRowCount(0);
+                dbHandler.eraseDB();
+                statusString.setText("Erase complete");
+            }
+        });
+        buttonLoadDB.addActionListener(new buttonHandler() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                DatabaseHandler dbHandler = new DatabaseHandler();
+                List<String[]> result = new ArrayList<>();
+                result = dbHandler.LoadDB();
+                tableModel.setRowCount(0);
+                for (int i = 0; i < result.size(); i++) {
+                    String[] value = result.get(i);
+                    tableModel.insertRow(i, new Object[]{value[0], value[1], value[2]});
+                }
+                statusString.setText("Load complete");
+            }
+
+        });
+        buttonSendEmail.addActionListener(new buttonHandler() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                SendEmail mymail = new SendEmail("avguryanow@yandex.ru", "My project test mail send");
+                mymail.sendMessage("Hellow World !!!!!!!!!!");
+            }
+        });
     }
 
     public static void setJTableColumnsWidth(JTable table, int tablePreferredWidth, double... percentages) {
@@ -153,69 +211,70 @@ public class AppGUI extends JFrame {
                 } catch (IOException ex) {
                     System.out.println(ex.getMessage());
                 }
+                areaFileContain.setText(buffer.toString());
             }
-            areaFileContain.setText(buffer.toString());
+
         }
     }
 
-    class buttonSaveDBListener implements ActionListener {
-        DatabaseHandler dbHandler = new DatabaseHandler();
+//    class buttonSaveDBListener implements ActionListener {
+//        DatabaseHandler dbHandler = new DatabaseHandler();
+//
+//        public void actionPerformed(ActionEvent e) {
+//            String areaFileContainString = areaFileContain.getText();
+//            String name;
+//            String email;
+//            String tempString = "";
+//
+//            for (int i = 0; i < areaFileContainString.length(); i++) {
+//                if (areaFileContainString.charAt(i) != '\n') {
+//                    tempString += areaFileContainString.charAt(i);
+//                } else {
+//                    int tabStatement = tempString.indexOf('\t');
+//                    email = tempString.substring(0, tabStatement);
+//                    name = tempString.substring(tabStatement + 1, tempString.length());
+//                    tempString = "";
+//                    dbHandler.signUpuser(name, email);
+//                }
+//            }
+//            statusString.setText("Save complete");
+//        }
+//    }
 
-        public void actionPerformed(ActionEvent e) {
-            String areaFileContainString = areaFileContain.getText();
-            String name;
-            String email;
-            String tempString = "";
+//    class buttonEraseDBListener implements ActionListener {
+//        DatabaseHandler dbHandler = new DatabaseHandler();
+//
+//        public void actionPerformed(ActionEvent e) {
+//            tableModel.setRowCount(0);
+//            dbHandler.eraseDB();
+//            statusString.setText("Erase complete");
+//        }
+//    }
 
-            for (int i = 0; i < areaFileContainString.length(); i++) {
-                if (areaFileContainString.charAt(i) != '\n') {
-                    tempString += areaFileContainString.charAt(i);
-                } else {
-                    int tabStatement = tempString.indexOf('\t');
-                    email = tempString.substring(0, tabStatement);
-                    name = tempString.substring(tabStatement + 1, tempString.length());
-                    tempString = "";
-                    dbHandler.signUpuser(name, email);
-                }
-            }
-            statusString.setText("Save complete");
-        }
-    }
+//    class buttonLoadDBListener implements ActionListener {
+//        DatabaseHandler dbHandler = new DatabaseHandler();
+//        List<String[]> result = new ArrayList<>();
+//        //Map<Integer, String[]> result = new HashMap<>();
+//
+//        public void actionPerformed(ActionEvent e) {
+//            result = dbHandler.LoadDB();
+//            tableModel.setRowCount(0);
+//            for (int i = 0; i < result.size(); i++) {
+//                String[] value = result.get(i);
+//                tableModel.insertRow(i, new Object[]{value[0], value[1], value[2]});
+//            }
+//            statusString.setText("Load complete");
+//        }
+//
+//    }
 
-    class buttonEraseDBListener implements ActionListener {
-        DatabaseHandler dbHandler = new DatabaseHandler();
-
-        public void actionPerformed(ActionEvent e) {
-            tableModel.setRowCount(0);
-            dbHandler.eraseDB();
-            statusString.setText("Erase complete");
-        }
-    }
-
-    class buttonLoadDBListener implements ActionListener {
-        DatabaseHandler dbHandler = new DatabaseHandler();
-        List<String[]> result = new ArrayList<>();
-        //Map<Integer, String[]> result = new HashMap<>();
-
-        public void actionPerformed(ActionEvent e) {
-            result = dbHandler.LoadDB();
-            tableModel.setRowCount(0);
-            for (int i = 0; i < result.size(); i++) {
-                String[] value = result.get(i);
-                tableModel.insertRow(i, new Object[]{value[0], value[1], value[2]});
-            }
-            statusString.setText("Load complete");
-        }
-
-    }
-
-    class buttonSendMailListener implements ActionListener {
-        //     DatabaseHandler dbHandler = new DatabaseHandler();
-        public void actionPerformed(ActionEvent e) {
-            SendEmail mymail = new SendEmail("avguryanow@yandex.ru", "My project test mail send");
-            mymail.sendMessage("Hellow World !!!!!!!!!!");
-        }
-    }
+//    class buttonSendMailListener implements ActionListener {
+//        //     DatabaseHandler dbHandler = new DatabaseHandler();
+//        public void actionPerformed(ActionEvent e) {
+//            SendEmail mymail = new SendEmail("avguryanow@yandex.ru", "My project test mail send");
+//            mymail.sendMessage("Hellow World !!!!!!!!!!");
+//        }
+//    }
 
     class menuExitListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {

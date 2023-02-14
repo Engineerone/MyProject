@@ -10,7 +10,7 @@ public class DatabaseHandler extends MySQLConfigs {
     public Connection getDbConnection()
             throws ClassNotFoundException, SQLException {
         String connectionString = "jdbc:mysql://" + dbhost + ":" + dbPort + "/" + dbname;
-        Class.forName("com.mysql.cj.jdbc.Driver");
+        //  Class.forName("com.mysql.cj.jdbc.Driver");
         dbConnection = DriverManager.getConnection(connectionString, dbUser, dbPass);
         return dbConnection;
     }
@@ -33,6 +33,29 @@ public class DatabaseHandler extends MySQLConfigs {
             PreparedStatement prSt = getDbConnection().prepareStatement(insert);
             prSt.setString(1, name);
             prSt.setString(2, email);
+            prSt.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void updateRow(String name, String email) {
+        String update =
+//                "UPDATE " + Constants.USER_TABLE
+//                        + "SET" + Constants.USER_NAME + "=" + name + ","
+//                        + Constants.USER_EMAIL + "=" + email
+//                        + "WHERE " + Constants.USER_NAME + " =" + name + ","
+//                        + Constants.USER_EMAIL + " = " + email;
+                "UPDATE USERS SET NAME = ?, EMAIL = ? WHERE NAME = ? AND EMAIL= ?";
+
+        try {
+            PreparedStatement prSt = getDbConnection().prepareStatement(update);
+            prSt.setString(1, name);
+            prSt.setString(2, email);
+            prSt.setString(3, name);
+            prSt.setString(4, email);
             prSt.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
