@@ -4,10 +4,12 @@ import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
-import javax.swing.table.TableColumnModel;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.*;
+import java.sql.SQLSyntaxErrorException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,7 +64,7 @@ public class AppFrame extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 StringBuffer buffer;
-                fileChooser.setDialogTitle("Выбор директории");
+                fileChooser.setDialogTitle("Directory selection");
                 FileNameExtensionFilter filter = new FileNameExtensionFilter("*.txt", "txt");
                 fileChooser.setFileFilter(filter);
                 fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
@@ -113,7 +115,7 @@ public class AppFrame extends JFrame {
         });
         deleteDB.addActionListener(new buttonHandler() {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(ActionEvent e){
                 DatabaseHandler dbHandler = new DatabaseHandler();
                 dbHandler.dropDB();
                 statusString.setText("DB DELETED");
@@ -137,27 +139,29 @@ public class AppFrame extends JFrame {
         JButton buttonEraseDB = new JButton();
         JButton buttonSaveToDB = new JButton();
 
-
-        String[] column_names = {"#", "name", "email"};
-        DefaultTableModel tableModel = new DefaultTableModel(column_names, 0);
-        JTable dbTable = new JTable(tableModel);
-
-
         JPanel centralPanel = new JPanel(new BorderLayout());
         JPanel centralPanelNorth = new JPanel(new FlowLayout());
         JPanel centralPanelCenter = new JPanel(new FlowLayout());
         JPanel centralPanelSouth = new JPanel(new FlowLayout());
 
+
+        String[] column_names = {"#", "name", "email"};
+        DefaultTableModel tableModel = new DefaultTableModel(column_names, 0);
+        JTable dbTable = new JTable(tableModel);
+        RowSorter<TableModel> sorter = new TableRowSorter<>(tableModel);
+        dbTable.setRowSorter(sorter);
+
         buttonSaveToDB.setText("Save to DB");
         buttonLoadFromDB.setText("Load from DB");
         buttonEraseDB.setText("Erase DB");
+
         statusString.setText("Status string");
         statusString.setEditable(false);
 
         centralPanelNorth.add(buttonSaveToDB);
         centralPanelNorth.add(buttonLoadFromDB);
         centralPanelNorth.add(buttonEraseDB);
-        TableColumnModel columnModel = dbTable.getColumnModel();
+
         setJTableColumnsWidth(dbTable, 450, 10, 60, 60);
         centralPanelCenter.add(new JScrollPane(dbTable));
         centralPanelSouth.add(statusString);
@@ -182,7 +186,7 @@ public class AppFrame extends JFrame {
                         name = tempString.substring(0, tabStatement);
                         email = tempString.substring(tabStatement + 1);
                         tempString = "";
-                        dbHandler.signUpuser(name, email);
+                        dbHandler.insertRow(name, email);
                     }
                 }
                 statusString.setText("Save complete");
@@ -202,7 +206,7 @@ public class AppFrame extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 DatabaseHandler dbHandler = new DatabaseHandler();
                 List<String[]> result = new ArrayList<>();
-                result = dbHandler.LoadDB();
+                result = dbHandler.LoadFromDB();
                 tableModel.setRowCount(0);
                 for (int i = 0; i < result.size(); i++) {
                     String[] value = result.get(i);
@@ -210,9 +214,7 @@ public class AppFrame extends JFrame {
                 }
                 statusString.setText("Load complete");
             }
-
         });
-
 
         return centralPanel;
     }
