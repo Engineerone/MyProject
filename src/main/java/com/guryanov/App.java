@@ -2,7 +2,7 @@ package com.guryanov;
 
 public class App {
     public static void main(String[] args) {
-        AppGUI app = new AppGUI();
+        AppFrame app = new AppFrame();
         app.setVisible(true);
     }
 }

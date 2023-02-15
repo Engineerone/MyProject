@@ -1,5 +1,6 @@
 package com.guryanov;
 
+import javax.xml.transform.sax.SAXSource;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +35,11 @@ public class DatabaseHandler extends MySQLConfigs {
             prSt.setString(1, name);
             prSt.setString(2, email);
             prSt.executeUpdate();
-        } catch (SQLException e) {
+        }
+        catch (SQLIntegrityConstraintViolationException e){
+            System.out.println("Запись "+name+" "+email+" существует");
+        }
+                catch (SQLException e) {
             throw new RuntimeException(e);
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
@@ -57,11 +62,17 @@ public class DatabaseHandler extends MySQLConfigs {
             prSt.setString(3, name);
             prSt.setString(4, email);
             prSt.executeUpdate();
-        } catch (SQLException e) {
+        }
+        catch (SQLIntegrityConstraintViolationException e){
+            System.out.println("Запись"+name+" "+email+"существует");
+        }
+        catch (SQLException e) {
             throw new RuntimeException(e);
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
+
         }
+
     }
 
     public void eraseDB() {
@@ -109,8 +120,8 @@ public class DatabaseHandler extends MySQLConfigs {
 
             sqlQuery = "CREATE TABLE users (" +
                     "id int NOT NULL AUTO_INCREMENT," +
-                    "name varchar(45) NOT NULL," +
-                    "email varchar(45) NOT NULL," +
+                    "name varchar(45) NOT NULL ," +
+                    "email varchar(45) NOT NULL UNIQUE ," +
                     "PRIMARY KEY (`id`)" +
                     ")";
             prSt = getDbConnection().prepareStatement(sqlQuery);
