@@ -8,19 +8,22 @@ import javax.xml.transform.sax.SAXSource;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 public class DatabaseHandler extends MySQLConfigs {
     private Connection dbConnection;
     private String sqlQuery = "";
     private PreparedStatement prSt;
 
-    public Connection getDbConnection() throws ClassNotFoundException, SQLException {
+    public Connection getDbConnection() throws SQLException, ClassNotFoundException {
         String connectionString = "jdbc:mysql://" + dbhost + ":" + dbPort + "/" + dbname;
         dbConnection = DriverManager.getConnection(connectionString, dbUser, dbPass);
         return dbConnection;
     }
 
-    public void insertRow(String name, String email) {
+    public String insertRow(String name, String email) throws SQLException, ClassNotFoundException {
+        String result = "";
         sqlQuery = "INSERT INTO "
                 + Constants.USER_TABLE + "("
                 + Constants.USER_NAME + ","
@@ -31,44 +34,44 @@ public class DatabaseHandler extends MySQLConfigs {
             prSt.setString(1, name);
             prSt.setString(2, email);
             prSt.executeUpdate();
+
         } catch (SQLIntegrityConstraintViolationException e) {
-            System.out.println("Запись " + name + " " + email + " существует");
-        } catch (SQLException | ClassNotFoundException e) {
-            new Notice().unknowError();
+            result = "Запись уже есть - "+name+" "+email;
         }
+        return result;
     }
 
-    public void eraseDB() {
+    public void eraseDB() throws SQLException, ClassNotFoundException {
         sqlQuery = "DELETE FROM " + Constants.USER_TABLE;
-        try {
-            prSt = getDbConnection().prepareStatement(sqlQuery);
-            prSt.executeUpdate();
-        } catch (SQLException | ClassNotFoundException e) {
-            new Notice().unknowError();
-        }
+        //       try {
+        prSt = getDbConnection().prepareStatement(sqlQuery);
+        prSt.executeUpdate();
+//        } catch (SQLException | ClassNotFoundException e) {
+//            new Notice().unknowError();
+//        }
     }
 
-    public List LoadFromDB() {
+    public List LoadFromDB() throws SQLException, ClassNotFoundException {
         sqlQuery = "SELECT * FROM " + Constants.USER_TABLE + " ORDER BY id";
         List<String[]> result = new ArrayList<>();
-        try {
-            prSt = getDbConnection().prepareStatement(sqlQuery);
-            prSt.execute();
-            ResultSet resultSet = prSt.getResultSet();
-            while (resultSet.next()) {
-                String[] dbString = new String[3];
-                dbString[0] = resultSet.getString(1);
-                dbString[1] = resultSet.getString(2);
-                dbString[2] = resultSet.getString(3);
-                result.add(dbString);
-            }
+        //      try {
+        prSt = getDbConnection().prepareStatement(sqlQuery);
+        prSt.execute();
+        ResultSet resultSet = prSt.getResultSet();
+        while (resultSet.next()) {
+            String[] dbString = new String[3];
+            dbString[0] = resultSet.getString(1);
+            dbString[1] = resultSet.getString(2);
+            dbString[2] = resultSet.getString(3);
+            result.add(dbString);
         }
-        catch (CommunicationsException e) {
-            new Notice().communicationsDBError();
-        }
-        catch (SQLException | ClassNotFoundException e) {
-            new Notice().unknowError();
-        }
+//        }
+//        catch (CommunicationsException e) {
+//            new Notice().communicationsDBError();
+//        }
+//        catch (SQLException | ClassNotFoundException e) {
+//            new Notice().unknowError();
+//        }
 
         return result;
     }

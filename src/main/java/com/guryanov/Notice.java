@@ -1,8 +1,9 @@
 package com.guryanov;
 
 import javax.swing.*;
+import java.lang.reflect.Executable;
 
-class Notice {
+public class Notice {
 
     void dbCreated() {
         JOptionPane.showMessageDialog(
@@ -42,10 +43,26 @@ class Notice {
 
     }
 
+    void unknowError(String error) {
+        JOptionPane.showMessageDialog(
+                null,
+                error,
+                "Output", JOptionPane.ERROR_MESSAGE);
+
+    }
+
     void communicationsDBError() {
         JOptionPane.showMessageDialog(
                 null,
                 "Ошибка соединения с базой данных",
+                "Ounput",
+                JOptionPane.ERROR_MESSAGE);
+    }
+
+    void authorizationDBError() {
+        JOptionPane.showMessageDialog(
+                null,
+                "Ошибка авторизации",
                 "Ounput",
                 JOptionPane.ERROR_MESSAGE);
     }
