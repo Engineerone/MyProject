@@ -13,7 +13,6 @@ import java.io.*;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.SortedMap;
 
 import static com.guryanov.ClearString.getClearString;
 import static com.guryanov.ConfigSetting.*;
@@ -72,7 +71,6 @@ public class AppFrame extends JFrame {
         fileMenu.addSeparator();
         fileMenu.add(fileExitMenu);
         fileOpenMenu.addActionListener((ButtonHandler) e -> {
-            StringBuffer buffer;
             fileChooser.setDialogTitle("Directory selection");
             FileNameExtensionFilter filter = new FileNameExtensionFilter("*.txt", "txt");
             fileChooser.setFileFilter(filter);
@@ -315,8 +313,8 @@ public class AppFrame extends JFrame {
         buttonEraseDB.addActionListener((ButtonHandler) e -> {
             try {
                 DatabaseHandler dbHandler = new DatabaseHandler();
-                tableModel.setRowCount(0);
                 dbHandler.eraseDB();
+                tableModel.setRowCount(0);
             } catch (SQLException ex) {
                 notice.getSQLExceptionNotice(ex);
             } catch (ClassNotFoundException ex) {
@@ -352,8 +350,8 @@ public class AppFrame extends JFrame {
         rightSidePanel.add(rightSidePanelNorth, BorderLayout.NORTH);
         rightSidePanel.add(rightSidePanelSouth, BorderLayout.SOUTH);
         buttonSendEmail.addActionListener((ButtonHandler) e -> {
-            String name = "";
-            String email = "";
+            String name;
+            String email;
             DatabaseHandler databaseHandler = new DatabaseHandler();
 
             for (int i = 0; i < tableModel.getRowCount(); i++) {
