@@ -1,9 +1,10 @@
 package com.guryanov;
 
 import javax.swing.*;
-import java.lang.reflect.Executable;
+import java.sql.SQLException;
 
-public class Notice {
+public class NoticeHandler {
+
 
     void dbCreated() {
         JOptionPane.showMessageDialog(
@@ -15,7 +16,7 @@ public class Notice {
     void dbExist() {
         JOptionPane.showMessageDialog(
                 null,
-                "База данных уже создана",
+                "База данных с таким именем уже создана",
                 "Output", JOptionPane.ERROR_MESSAGE);
     }
 
@@ -32,15 +33,6 @@ public class Notice {
                 null,
                 "База данных удалена",
                 "Output", JOptionPane.INFORMATION_MESSAGE);
-
-    }
-
-    void unknowError() {
-        JOptionPane.showMessageDialog(
-                null,
-                "Неизвестная ошибка",
-                "Output", JOptionPane.ERROR_MESSAGE);
-
     }
 
     void unknowError(String error) {
@@ -66,4 +58,26 @@ public class Notice {
                 "Ounput",
                 JOptionPane.ERROR_MESSAGE);
     }
+
+    void getSQLExceptionNotice(SQLException ex) {
+        if (ex.getSQLState().startsWith("28")) {
+            new NoticeHandler().authorizationDBError();
+        } else if (ex.getSQLState().startsWith("08")) {
+            new NoticeHandler().communicationsDBError();
+        } else if (ex.getSQLState().startsWith("42")) {
+            new NoticeHandler().dbNotFound();
+        } else if (ex.getSQLState().startsWith("HY")) {
+            new NoticeHandler().dbExist();
+        } else {
+            new NoticeHandler().unknowError(ex.getMessage());
+        }
+        AppFrame.status = "error";
+    }
+
+    void getClassNotFoundException(ClassNotFoundException ex) {
+        new NoticeHandler().unknowError(ex.getMessage());
+        AppFrame.status = "error";
+    }
+
+
 }
