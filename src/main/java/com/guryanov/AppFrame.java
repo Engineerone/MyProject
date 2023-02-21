@@ -9,10 +9,13 @@ import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.*;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static com.guryanov.ClearString.getClearString;
 import static com.guryanov.ConfigSetting.*;
@@ -20,15 +23,12 @@ import static com.guryanov.ConfigSetting.*;
 public class AppFrame extends JFrame {
 
     private JTextArea areaFileContain = new JTextArea("", 30, 30);
-    private static JTextField statusString = new JTextField("", 41);
-    static String status = "";
+    public static JTextField statusString = new JTextField("", 41);
+    public static String status = "";
     private NoticeHandler notice = new NoticeHandler();
-
-
-    private String[] column_names = {"#", "name", "email", "send"};
-    private DefaultTableModel tableModel = new DefaultTableModel(column_names, 0);
-    private JTable dbTable = new JTable(tableModel);
-
+    private static String[] column_names = {"#", "name", "email", "send"};
+    public static DefaultTableModel tableModel = new DefaultTableModel(column_names, 0);
+    private static JTable dbTable = new JTable(tableModel);
 
     AppFrame() {
         super("My project - SPAMMER");
@@ -78,12 +78,13 @@ public class AppFrame extends JFrame {
             int result = fileChooser.showOpenDialog(AppFrame.this);
             if (result == JFileChooser.APPROVE_OPTION) {
                 try (BufferedReader reader = new BufferedReader(new FileReader(fileChooser.getSelectedFile()))) {
-                    String fileString;
+                    String tempString;
                     areaFileContain.setText("");
                     while (reader.ready()) {
-                        fileString = reader.readLine();
-                        areaFileContain.append(fileString);
-                        areaFileContain.append("\n");
+                        tempString = reader.readLine().trim();
+                        if (tempString.length() == 0 | !tempString.contains("\t") | !tempString.contains("@")) continue;
+                        if (tempString.startsWith("\n")) continue;
+                        areaFileContain.append(tempString + "\n");
                     }
                 } catch (IOException ex) {
                     System.out.println(ex.getMessage());
@@ -252,10 +253,6 @@ public class AppFrame extends JFrame {
         JPanel centralPanelCenter = new JPanel(new FlowLayout());
         JPanel centralPanelSouth = new JPanel(new FlowLayout());
 
-
-//        String[] column_names = {"#", "name", "email"};
-//        DefaultTableModel tableModel = new DefaultTableModel(column_names, 0);
-
         RowSorter<TableModel> sorter = new TableRowSorter<>(tableModel);
         dbTable.setRowSorter(sorter);
 
@@ -299,6 +296,14 @@ public class AppFrame extends JFrame {
                         name = tempString.substring(0, tabStatement);
                         email = tempString.substring(tabStatement + 1);
                         tempString = "";
+                        Pattern VALID_EMAIL_ADDRESS_REGEX =
+                                Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
+                        Matcher matcher = VALID_EMAIL_ADDRESS_REGEX.matcher(email);
+                        if (!matcher.matches()) {
+                            System.out.println("Формат записи не соответствует " + email);
+                            continue;
+                        }
+
                         dbHandler.insertRow(name, email);
                     }
                 }
@@ -323,12 +328,7 @@ public class AppFrame extends JFrame {
                 statusString.setText("Erase " + status);
             }
         });
-        buttonLoadFromDB.addActionListener(new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                updateTable();
-            }
-        });
+        buttonLoadFromDB.addActionListener(e -> new UploadTable());
 
         return centralPanel;
     }
@@ -358,39 +358,20 @@ public class AppFrame extends JFrame {
                 name = tableModel.getValueAt(i, 1).toString();
                 email = tableModel.getValueAt(i, 2).toString();
                 EmailHandler mymail = new EmailHandler(email, fieldEmailSubject.getText());
-                if (mymail.sendMessage(areaEmailMessage.getText().replaceAll("<name>",name))) {
+                if (mymail.sendMessage(areaEmailMessage.getText().replaceAll("<name>", name))) {
                     try {
                         databaseHandler.updatetRow(name, email);
-                        updateTable();
+                        new UploadTable();
                     } catch (SQLException ex) {
                         throw new RuntimeException(ex);
                     } catch (ClassNotFoundException ex) {
                         throw new RuntimeException(ex);
                     }
-                    System.out.println(name+" "+email+" message sended");
-                } else System.out.println(name+" "+email+" message NOT sended");
+                    System.out.println(name + " " + email + " message sended");
+                } else System.out.println(name + " " + email + " message NOT sended");
 
             }
         });
         return rightSidePanel;
-    }
-
-    void updateTable() {
-        try {
-            DatabaseHandler dbHandler = new DatabaseHandler();
-            List<String[]> result;
-            result = dbHandler.LoadFromDB();
-            tableModel.setRowCount(0);
-            for (int i = 0; i < result.size(); i++) {
-                String[] value = result.get(i);
-                tableModel.insertRow(i, new Object[]{value[0], value[1], value[2], value[3]});
-            }
-        } catch (SQLException ex) {
-            notice.getSQLExceptionNotice(ex);
-        } catch (ClassNotFoundException ex) {
-            notice.getClassNotFoundException(ex);
-        } finally {
-            statusString.setText("Load " + status);
-        }
     }
 }
