@@ -1,4 +1,4 @@
-package com.guryanov;
+package com.guryanov.button;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

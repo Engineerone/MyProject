@@ -1,4 +1,4 @@
-package com.guryanov;
+package com.guryanov.handler;
 
 import javax.mail.PasswordAuthentication;
 

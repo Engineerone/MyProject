@@ -1,36 +1,33 @@
-package com.guryanov;
+package com.guryanov.handler;
+
+import com.guryanov.ui.AppFrame;
+import com.guryanov.config.ConfigSetting;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.guryanov.ui.AppFrame.statusString;
 
 public class DatabaseHandler extends ConfigSetting {
     private Connection dbConnection;
     private String sqlQuery = "";
     private PreparedStatement prSt;
 
-    public Connection getDbConnection() {
-        try{
-        Class.forName("com.mysql.cj.jdbc.Driver");
+    public Connection getDbConnection() throws SQLException {
         String connectionString = "jdbc:mysql://" + db_host + ":" + db_port + "/" + db_schema;
-        dbConnection = DriverManager.getConnection(connectionString, db_user, db_secr);}
-        catch(SQLException ex){
-
-        } catch (ClassNotFoundException e) {
-
-             throw new RuntimeException(e);
-        }
-
+        dbConnection = DriverManager.getConnection(connectionString, db_user, db_secr);
         return dbConnection;
     }
 
-    public void insertRow(String name, String email) throws SQLException, ClassNotFoundException {
-        sqlQuery = "INSERT INTO "
-                + db_table_name + "("
-                + db_table_columnName + ","
-                + db_table_columnEmail + ","
-                + db_table_columnSend + ")" +
-                "VALUES(?,?,?)";
+    public void insertRow(String name, String email) throws SQLException {
+        sqlQuery =
+                "INSERT INTO "
+                        + db_table_name + "("
+                        + db_table_columnName + ","
+                        + db_table_columnEmail + ","
+                        + db_table_columnSend + ")" +
+                        "VALUES(?,?,?)";
         try (PreparedStatement prSt = getDbConnection().prepareStatement(sqlQuery)) {
             prSt.setString(1, name);
             prSt.setString(2, email);
@@ -38,19 +35,20 @@ public class DatabaseHandler extends ConfigSetting {
             prSt.executeUpdate();
             AppFrame.status = "completed";
         } catch (SQLIntegrityConstraintViolationException e) {
-            System.out.println("Запись уже есть - " + name + " " + email);
+            statusString.append("\n"+"Запись уже есть - " + name + " " + email);
         }
     }
 
-    public void updatetRow(String name, String email) throws SQLException, ClassNotFoundException {
-        sqlQuery = "UPDATE "
-                + db_table_name
-                + " SET "
-                + db_table_columnSend + "=?"
-                + "WHERE "
-                + db_table_columnName + "=?"
-                + "AND "
-                + db_table_columnEmail + "=?";
+    public void updatetRow(String name, String email) throws SQLException  {
+        sqlQuery =
+                "UPDATE "
+                        + db_table_name
+                        + " SET "
+                        + db_table_columnSend + "=?"
+                        + "WHERE "
+                        + db_table_columnName + "=?"
+                        + "AND "
+                        + db_table_columnEmail + "=?";
         try (PreparedStatement prSt = getDbConnection().prepareStatement(sqlQuery)) {
             prSt.setString(1, "send");
             prSt.setString(2, name);
@@ -58,12 +56,14 @@ public class DatabaseHandler extends ConfigSetting {
             prSt.executeUpdate();
             AppFrame.status = "completed";
         } catch (SQLIntegrityConstraintViolationException e) {
-            System.out.println("Запись уже есть - " + name + " " + email);
+            statusString.append("\n"+e.getMessage());
         }
     }
 
     public void eraseDB() throws SQLException, ClassNotFoundException {
-        sqlQuery = "DELETE FROM " + db_table_name;
+        sqlQuery =
+                "DELETE FROM "
+                        + db_table_name;
         try (PreparedStatement prSt = getDbConnection().prepareStatement(sqlQuery)) {
             prSt.executeUpdate();
             AppFrame.status = "completed";
@@ -72,7 +72,10 @@ public class DatabaseHandler extends ConfigSetting {
 
     public List LoadFromDB() throws SQLException, ClassNotFoundException {
         List<String[]> result = new ArrayList<>();
-        sqlQuery = "SELECT * FROM " + db_table_name + " ORDER BY id";
+        sqlQuery =
+                "SELECT * FROM "
+                        + db_table_name
+                        + " ORDER BY id";
         try (PreparedStatement prSt = getDbConnection().prepareStatement(sqlQuery)) {
             prSt.execute();
             ResultSet resultSet = prSt.getResultSet();
@@ -95,13 +98,15 @@ public class DatabaseHandler extends ConfigSetting {
         try (PreparedStatement prSt = DriverManager.getConnection(connectionString, db_user, db_secr).prepareStatement(sqlQuery)) {
             prSt.execute();
         }
-        sqlQuery = "CREATE TABLE " + db_table_name + "(" +
-                "id int NOT NULL AUTO_INCREMENT," +
-                "name varchar(45) NOT NULL ," +
-                "email varchar(45) NOT NULL UNIQUE ," +
-                "send varchar(45) NOT NULL ," +
-                "PRIMARY KEY (`id`)" +
-                ")";
+        sqlQuery =
+                "CREATE TABLE "
+                        + db_table_name + "(" +
+                        "id int NOT NULL AUTO_INCREMENT," +
+                        "name varchar(45) NOT NULL ," +
+                        "email varchar(45) NOT NULL UNIQUE ," +
+                        "send varchar(45) NOT NULL ," +
+                        "PRIMARY KEY (`id`)" +
+                        ")";
         try (PreparedStatement prSt = getDbConnection().prepareStatement(sqlQuery)) {
             {
                 prSt.execute();
@@ -111,7 +116,9 @@ public class DatabaseHandler extends ConfigSetting {
     }
 
     public void dropDB() throws SQLException, ClassNotFoundException {
-        sqlQuery = "DROP DATABASE " + db_schema;
+        sqlQuery =
+                "DROP DATABASE "
+                        + db_schema;
         try (PreparedStatement prSt = getDbConnection().prepareStatement(sqlQuery)) {
             prSt.execute();
             AppFrame.status = "completed";

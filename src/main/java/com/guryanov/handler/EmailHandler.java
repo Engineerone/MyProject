@@ -1,8 +1,13 @@
-package com.guryanov;
+package com.guryanov.handler;
+
+import com.guryanov.config.ConfigSetting;
+import com.guryanov.ui.AppFrame;
 
 import javax.mail.*;
 import javax.mail.internet.*;
 import java.util.Properties;
+
+import static com.guryanov.ui.AppFrame.statusString;
 
 public class EmailHandler extends ConfigSetting {
     private Message message = null;
@@ -24,10 +29,13 @@ public class EmailHandler extends ConfigSetting {
             message.setFrom(email_from);
             message.setRecipient(Message.RecipientType.TO, email_to);
             message.setSubject(thema);
+            AppFrame.status = "completed";
         } catch (AddressException e) {
-            System.err.println(e.getMessage());
+            AppFrame.status = "error";
+            statusString.append("\n"+e.getMessage());
         } catch (MessagingException e) {
-            System.err.println(e.getMessage());
+            AppFrame.status = "error";
+            statusString.append("\n"+e.getMessage());
         }
     }
 
