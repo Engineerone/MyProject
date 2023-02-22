@@ -321,8 +321,10 @@ public class AppFrame extends JFrame {
                 dbHandler.eraseDB();
                 tableModel.setRowCount(0);
             } catch (SQLException ex) {
+                statusString.setText("1 " + ex.getMessage());
                 notice.getSQLExceptionNotice(ex);
             } catch (ClassNotFoundException ex) {
+                statusString.setText("2 " + ex.getMessage());
                 notice.getClassNotFoundException(ex);
             } finally {
                 statusString.setText("Erase " + status);
@@ -353,7 +355,6 @@ public class AppFrame extends JFrame {
             String name;
             String email;
             DatabaseHandler databaseHandler = new DatabaseHandler();
-
             for (int i = 0; i < tableModel.getRowCount(); i++) {
                 name = tableModel.getValueAt(i, 1).toString();
                 email = tableModel.getValueAt(i, 2).toString();
@@ -369,7 +370,6 @@ public class AppFrame extends JFrame {
                     }
                     System.out.println(name + " " + email + " message sended");
                 } else System.out.println(name + " " + email + " message NOT sended");
-
             }
         });
         return rightSidePanel;
