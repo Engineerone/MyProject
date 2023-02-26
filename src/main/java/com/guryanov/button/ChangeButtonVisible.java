@@ -1,16 +1,15 @@
 package com.guryanov.button;
 
-import com.guryanov.App;
 import com.guryanov.ui.AppFrame;
 
 import static com.guryanov.config.ConfigSetting.*;
 import static com.guryanov.ui.AppFrame.tableModel;
 
-public class ChangeSave {
-    public ChangeSave(boolean usedb) {
-        useWithDB = usedb;
-        if (!usedb) {
-            AppFrame.buttonSaveToDB.setText("Save to table");
+public class ChangeButtonVisible {
+    public ChangeButtonVisible() {
+
+        if (!useWithDB) {
+            AppFrame.buttonSaveToDB.setText("Load into table");
             AppFrame.buttonLoadFromDB.setEnabled(false);
             AppFrame.buttonEraseDB.setEnabled(false);
             AppFrame.createDB.setEnabled(false);

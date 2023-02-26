@@ -14,12 +14,12 @@ import java.util.regex.*;
 
 public class SaveToDB {
     public SaveToDB(boolean useDB) {
-        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-        statusString.append("\n" + "Save start " + timestamp);
         if (areaFileContain.getText().length() == 0 | areaFileContain.getText().startsWith("File format")) {
             statusString.append("\n" + "File not load or text area is empty.");
             return;
         }
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+        statusString.append("\n" + "Save start " + timestamp);
         try {
             String areaFileContainString = areaFileContain.getText();
             String name, email;
@@ -50,7 +50,7 @@ public class SaveToDB {
                 tableModel.setRowCount(0);
                 for (int i = 0; i < result.size(); i++) {
                     String[] value = result.get(i);
-                    tableModel.insertRow(i, new Object[]{i+1, value[0], value[1], ""});
+                    tableModel.insertRow(i, new Object[]{i + 1, value[0], value[1], ""});
                 }
             } else
                 new DatabaseHandler().insertRow(result);

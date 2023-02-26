@@ -16,5 +16,5 @@ public class ConfigSetting {
     public static String email_smtp_secr = "KlGpvO";
     public static String email_fieldFrom = "notify@zst.ru";
     public static boolean realSend = false;
-    public static boolean useWithDB = true;
+    public static boolean useWithDB = false;
 }

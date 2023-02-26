@@ -28,9 +28,11 @@ public class AppFrame extends JFrame {
     public static JTextArea areaEmailMessage = new JTextArea("", 32, 30);
     public static JTextField fieldEmailSubject = new JTextField();
     JPanel rightSidePanel = new JPanel(new BorderLayout());
+    JPanel rightSidePanelSouthButton = new JPanel(new FlowLayout());
     JPanel rightSidePanelNorth = new JPanel(new BorderLayout());
     JPanel rightSidePanelSouth = new JPanel(new BorderLayout());
     JButton buttonSendEmail = new JButton();
+    JButton buttonSendEmailStop = new JButton();
     public static JButton buttonLoadFromDB = new JButton();
     public static JButton buttonEraseDB = new JButton();
     public static JButton buttonSaveToDB = new JButton();
@@ -197,7 +199,8 @@ public class AppFrame extends JFrame {
                 email_smtp_secr = field_email_smtp_secr.getText().trim();
                 email_fieldFrom = field_email_fieldFrom.getText().trim();
                 realSend = checkBox_realSend.isSelected();
-                new ChangeSave(checkBox_useWithDB.isSelected());
+                useWithDB = checkBox_useWithDB.isSelected();
+                new ChangeButtonVisible();
                 frame.dispose();
             });
         });
@@ -215,9 +218,11 @@ public class AppFrame extends JFrame {
     private JPanel createCentralPanel() {
         RowSorter<TableModel> sorter = new TableRowSorter<>(tableModel);
         dbTable.setRowSorter(sorter);
+
         buttonSaveToDB.setText("Save to DB");
         buttonLoadFromDB.setText("Load from DB");
         buttonEraseDB.setText("Erase DB");
+        new ChangeButtonVisible();
         statusString.setText("Status string");
         statusString.setEditable(false);
         centralPanelNorth.add(buttonSaveToDB);
@@ -242,19 +247,31 @@ public class AppFrame extends JFrame {
     }
 
     private JPanel createRightSidePanel() {
+
         buttonSendEmail.setText("Send e-mail");
+        buttonSendEmailStop.setText("Stop send");
         fieldEmailSubject.setText("Introduce my first JAVA project - SPAMMER");
         areaEmailMessage.setText("Hello <name>");
+        rightSidePanelSouthButton.add(buttonSendEmail);
+        rightSidePanelSouthButton.add(buttonSendEmailStop);
         rightSidePanelNorth.add(fieldEmailSubject, BorderLayout.NORTH);
         rightSidePanelNorth.add(new JScrollPane(areaEmailMessage), BorderLayout.SOUTH);
-        rightSidePanelSouth.add(buttonSendEmail, BorderLayout.NORTH);
+        rightSidePanelSouth.add(rightSidePanelSouthButton);
         rightSidePanel.add(rightSidePanelNorth, BorderLayout.NORTH);
         rightSidePanel.add(rightSidePanelSouth, BorderLayout.SOUTH);
         buttonSendEmail.addActionListener(e -> {
             SendEmail sendEmail = new SendEmail();
-            Thread thread = new Thread(sendEmail, "Поток");
-            System.out.println(thread);
+            Thread thread = new Thread(sendEmail, "Send thread");
             thread.start();
+            statusString.append("\n" + "Thread id " + thread.getId());
+        });
+        buttonSendEmailStop.addActionListener(e -> {
+            for (Thread t : Thread.getAllStackTraces().keySet()) {
+                if (t.getName().equals("Send thread")) {
+                    t.stop();
+                    statusString.append("\n" + t.isAlive());
+                }
+            }
         });
         return rightSidePanel;
     }

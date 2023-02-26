@@ -49,7 +49,7 @@ public class SendEmail implements Runnable {
                         try {
                             if (useWithDB) {
                                 new DatabaseHandler().updatetRow(name, email);
-                                new LoadFromDB();
+                                tableModel.setValueAt("send",i,3);
                             } else
                                 tableModel.setValueAt("send",i,3);
                         } catch (SQLException ex) {
@@ -58,7 +58,7 @@ public class SendEmail implements Runnable {
                             statusString.append("\n" + "Send " + status);
                         }
                         statusString.append("\n" + name + " " + email + " message sended");
-                        dbTable.scrollRectToVisible(dbTable.getCellRect(i + 10, 2, true));
+                        dbTable.scrollRectToVisible(dbTable.getCellRect(i + 20, 3, true));
                     } else statusString.append("\n" + name + " " + email + " message NOT sended");
                 } catch (MessagingException ex) {
                     AppFrame.status = "error";

@@ -5,7 +5,6 @@ import static com.guryanov.ui.AppFrame.*;
 
 import java.sql.SQLException;
 
-
 public class CreateDB {
     public CreateDB() {
         try {
