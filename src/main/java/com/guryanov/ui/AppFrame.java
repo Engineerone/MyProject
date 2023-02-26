@@ -2,21 +2,28 @@ package com.guryanov.ui;
 
 import com.guryanov.button.*;
 import com.guryanov.handler.*;
+
 import javax.swing.*;
 import javax.swing.table.*;
-import javax.swing.text.DefaultCaret;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import static com.guryanov.config.ConfigSetting.*;
 
 public class AppFrame extends JFrame {
 
     public static JTextArea areaFileContain = new JTextArea("", 35, 30);
-    public static JTextArea statusString = new JTextArea(5,41);
-
+    public static JTextArea statusString = new JTextArea(5, 41);
     public static String status = "";
     public NoticeHandler notice = new NoticeHandler();
     public static String[] column_names = {"#", "name", "email", "send"};
-    public static DefaultTableModel tableModel = new DefaultTableModel(column_names, 0);
+    public static DefaultTableModel tableModel = new DefaultTableModel(column_names, 0) {
+        @Override
+        public boolean isCellEditable(int row, int column) {
+            return false;
+        }
+    };
     public static JTable dbTable = new JTable(tableModel);
     public static JTextArea areaEmailMessage = new JTextArea("", 32, 30);
     public static JTextField fieldEmailSubject = new JTextField();
@@ -24,17 +31,18 @@ public class AppFrame extends JFrame {
     JPanel rightSidePanelNorth = new JPanel(new BorderLayout());
     JPanel rightSidePanelSouth = new JPanel(new BorderLayout());
     JButton buttonSendEmail = new JButton();
-    JButton buttonLoadFromDB = new JButton();
-    JButton buttonEraseDB = new JButton();
-    JButton buttonSaveToDB = new JButton();
+    public static JButton buttonLoadFromDB = new JButton();
+    public static JButton buttonEraseDB = new JButton();
+    public static JButton buttonSaveToDB = new JButton();
     JPanel centralPanel = new JPanel(new BorderLayout());
     JPanel centralPanelNorth = new JPanel(new FlowLayout());
     JPanel centralPanelCenter = new JPanel(new FlowLayout());
     JPanel centralPanelSouth = new JPanel(new FlowLayout());
     JPanel leftSidePanel = new JPanel(new FlowLayout());
     JMenu toolMenu = new JMenu();
-    JMenuItem createDB = new JMenuItem();
-    JMenuItem deleteDB = new JMenuItem();
+    public static JMenuItem createDB = new JMenuItem();
+    public static JMenuItem deleteDB = new JMenuItem();
+    JMenuItem prepareFile = new JMenuItem();
     JMenuItem setting = new JMenuItem();
     JMenu fileMenu = new JMenu();
     JMenuItem fileOpenMenu = new JMenuItem();
@@ -85,13 +93,17 @@ public class AppFrame extends JFrame {
         toolMenu.setText("Tools");
         createDB.setText("Create DB");
         deleteDB.setText("Delete DB");
+        prepareFile.setText("Prepare file");
         setting.setText("Settings");
         toolMenu.add(createDB);
         toolMenu.add(deleteDB);
         toolMenu.addSeparator();
+        toolMenu.add(prepareFile);
+        toolMenu.addSeparator();
         toolMenu.add(setting);
         createDB.addActionListener(e -> new CreateDB());
         deleteDB.addActionListener(e -> new DeleteDB());
+        prepareFile.addActionListener(e -> new PrepareFile(AppFrame.this));
         setting.addActionListener((ButtonHandler) e -> {
             JFrame frame = new JFrame();
             frame.setBounds(550, 300, 300, 400);
@@ -152,10 +164,15 @@ public class AppFrame extends JFrame {
             JTextField field_email_fieldFrom = new JTextField(email_fieldFrom);
             panelNorth.add(field_email_fieldFrom);
 
-            panelNorth.add(new JLabel("Real send"));
+            panelNorth.add(new JLabel("Use real email send"));
             JCheckBox checkBox_realSend = new JCheckBox();
             checkBox_realSend.setSelected(realSend);
             panelNorth.add(checkBox_realSend);
+
+            panelNorth.add(new JLabel("Use program with DB"));
+            JCheckBox checkBox_useWithDB = new JCheckBox();
+            checkBox_useWithDB.setSelected(useWithDB);
+            panelNorth.add(checkBox_useWithDB);
 
             JButton buttonSave = new JButton("Save");
             panelSouth.add(buttonSave);
@@ -180,16 +197,17 @@ public class AppFrame extends JFrame {
                 email_smtp_secr = field_email_smtp_secr.getText().trim();
                 email_fieldFrom = field_email_fieldFrom.getText().trim();
                 realSend = checkBox_realSend.isSelected();
+                new ChangeSave(checkBox_useWithDB.isSelected());
                 frame.dispose();
             });
         });
         return toolMenu;
     }
 
-
     private JPanel createLeftSidePanel() {
         areaFileContain.setEditable(false);
-        areaFileContain.setText("");
+        areaFileContain.setText("File format:\nname< tab >email");
+        areaFileContain.append("\n\nIf your file only contains emails,\nuse the " + "Prepare file" + " item to convert\nit to name< tab >email format");
         leftSidePanel.add(new JScrollPane(areaFileContain));
         return leftSidePanel;
     }
@@ -208,17 +226,16 @@ public class AppFrame extends JFrame {
         setJTableColumnsWidth(dbTable, 450, 10, 40, 40, 10);
         centralPanelCenter.add(new JScrollPane(dbTable));
 
-      statusString.setCaretPosition(statusString.getDocument().getLength());
+        statusString.setCaretPosition(statusString.getDocument().getLength());
         JScrollPane scrollStatus = new JScrollPane(statusString);
         scrollStatus.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollStatus.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-
 
         centralPanelSouth.add(scrollStatus);
         centralPanel.add(centralPanelNorth, BorderLayout.NORTH);
         centralPanel.add(centralPanelCenter, BorderLayout.CENTER);
         centralPanel.add(centralPanelSouth, BorderLayout.SOUTH);
-        buttonSaveToDB.addActionListener(e -> new SaveToDB());
+        buttonSaveToDB.addActionListener(e -> new SaveToDB(useWithDB));
         buttonEraseDB.addActionListener(e -> new EraseDB());
         buttonLoadFromDB.addActionListener(e -> new LoadFromDB());
         return centralPanel;
@@ -233,7 +250,12 @@ public class AppFrame extends JFrame {
         rightSidePanelSouth.add(buttonSendEmail, BorderLayout.NORTH);
         rightSidePanel.add(rightSidePanelNorth, BorderLayout.NORTH);
         rightSidePanel.add(rightSidePanelSouth, BorderLayout.SOUTH);
-        buttonSendEmail.addActionListener(e -> new SendEmail());
+        buttonSendEmail.addActionListener(e -> {
+            SendEmail sendEmail = new SendEmail();
+            Thread thread = new Thread(sendEmail, "Поток");
+            System.out.println(thread);
+            thread.start();
+        });
         return rightSidePanel;
     }
 }

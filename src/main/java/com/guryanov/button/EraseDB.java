@@ -12,8 +12,7 @@ public class EraseDB {
             tableModel.setRowCount(0);
         } catch (SQLException ex) {
             new NoticeHandler().getSQLExceptionNotice(ex);
-        } catch (ClassNotFoundException ex) {
-            new NoticeHandler().getClassNotFoundException(ex);
+
         } finally {
             statusString.append("\n"+"Erase DB " + status);
         }

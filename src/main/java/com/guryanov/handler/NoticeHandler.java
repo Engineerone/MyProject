@@ -67,7 +67,14 @@ public class NoticeHandler {
     public void IOError(String error) {
         JOptionPane.showMessageDialog(
                 null,
-                "Ошибка загрузки файла"+error,
+                "Ошибка обработки файла"+error,
+                "Output", JOptionPane.ERROR_MESSAGE);
+    }
+
+    public void FileNotFoundException(String error){
+        JOptionPane.showMessageDialog(
+                null,
+                "Файл не найден"+error,
                 "Output", JOptionPane.ERROR_MESSAGE);
     }
     public void getSQLExceptionNotice(SQLException ex) {
