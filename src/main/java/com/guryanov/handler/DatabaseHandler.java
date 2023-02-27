@@ -1,14 +1,14 @@
 package com.guryanov.handler;
 
-import com.guryanov.App;
 import com.guryanov.ui.AppFrame;
 import com.guryanov.config.ConfigSetting;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
-import static com.guryanov.ui.AppFrame.statusString;
+import static com.guryanov.ui.AppFrame.*;
 
 public class DatabaseHandler extends ConfigSetting {
     private String sqlQuery = "";
@@ -20,9 +20,9 @@ public class DatabaseHandler extends ConfigSetting {
         return dbConnection;
     }
 
-    public void insertRow(List<String[]> result) throws SQLException {
+    public void insertRow(Set<List<String>> result) throws SQLException {
         try (Connection connection = getDbConnection()) {
-            for (String[] resultString : result) {
+            for (List<String> resultString:result) {
                 try {
                     sqlQuery =
                             "INSERT INTO "
@@ -32,20 +32,20 @@ public class DatabaseHandler extends ConfigSetting {
                                     + db_table_columnSend + ")" +
                                     "VALUES(?,?,?)";
                     PreparedStatement prSt = connection.prepareStatement(sqlQuery);
-                    prSt.setString(1, resultString[0]);
-                    prSt.setString(2, resultString[1]);
+                    prSt.setString(1, resultString.get(0));
+                    prSt.setString(2, resultString.get(1));
                     prSt.setString(3, "");
                     prSt.executeUpdate();
-                    statusString.append("\n" + "Line written -> " + resultString[0] + " " + resultString[1]);
+                    statusString.append("\n" + "Line written -> " + resultString.get(0) + " " + resultString.get(1));
                 } catch (SQLIntegrityConstraintViolationException e) {
-                    statusString.append("\n" + "Record exists -> " + resultString[0] + " " + resultString[1]);
+                    statusString.append("\n" + "Record exists -> " + resultString.get(0) + " " + resultString.get(1));
                 }
             }
             AppFrame.status = "completed";
         }
     }
 
-    public void updatetRow(String name, String email) throws SQLException {
+    public void updatetRow(int index, String name, String email) throws SQLException {
         sqlQuery =
                 "UPDATE "
                         + db_table_name

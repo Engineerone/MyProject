@@ -2,14 +2,11 @@ package com.guryanov.button;
 
 import com.guryanov.handler.*;
 
-import javax.xml.crypto.Data;
-
 import static com.guryanov.ui.AppFrame.*;
 
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.regex.*;
 
 public class SaveToDB {
@@ -24,12 +21,12 @@ public class SaveToDB {
             String areaFileContainString = areaFileContain.getText();
             String name, email;
             String tempString = "";
-            List<String[]> result = new ArrayList<>();
+            Set<List<String>> result = new HashSet<>();
             for (int i = 0; i < areaFileContainString.length(); i++) {
                 if (areaFileContainString.charAt(i) != '\n') {
                     tempString += areaFileContainString.charAt(i);
                 } else {
-                    String[] resultString = new String[2];
+                    List<String> resultString;
                     int tabStatement = tempString.indexOf('\t');
                     name = tempString.substring(0, tabStatement);
                     email = tempString.substring(tabStatement + 1);
@@ -41,16 +38,16 @@ public class SaveToDB {
                         statusString.append("\n" + "The string does not match the format -> " + email);
                         continue;
                     }
-                    resultString[0] = name;
-                    resultString[1] = email;
+                    resultString = Arrays.asList(name, email);
                     result.add(resultString);
                 }
             }
             if (!useDB) {
                 tableModel.setRowCount(0);
-                for (int i = 0; i < result.size(); i++) {
-                    String[] value = result.get(i);
-                    tableModel.insertRow(i, new Object[]{i + 1, value[0], value[1], ""});
+                int i = 0;
+                for (List<String> resultString : result) {
+                    tableModel.insertRow(i, new Object[]{i + 1, resultString.get(0), resultString.get(1), ""});
+                    i++;
                 }
             } else
                 new DatabaseHandler().insertRow(result);
