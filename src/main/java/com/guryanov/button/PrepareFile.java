@@ -22,8 +22,8 @@ public class PrepareFile {
 //        String outputFilePath = currentDirectory + "\\outputfile.txt";
         if (result == JFileChooser.APPROVE_OPTION) {
 
-            StringBuffer stringBuffer = new FileLoad().fileContain;
-            new FileSave(stringBuffer);
+            FileLoad fileLoad = new FileLoad(1);
+            new FileSave(fileLoad);
 //
 //
 //            try (BufferedReader reader = new BufferedReader(new FileReader(fileChooser.getSelectedFile()));

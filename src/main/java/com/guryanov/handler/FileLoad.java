@@ -13,12 +13,30 @@ public class FileLoad {
         try (BufferedReader reader = new BufferedReader(new FileReader(fileChooser.getSelectedFile()))) {
             while (reader.ready()) {
                 String tempString = reader.readLine().trim();
-                if (tempString.length() == 0 | !tempString.contains("\t") | !tempString.contains("@")) continue;
-                if (tempString.startsWith("\n")) continue;
+                if (tempString.startsWith("\n") |
+                        tempString.length() == 0 |
+                        !tempString.contains("\t") |
+                        !tempString.contains("@")) continue;
                 fileContain.append(tempString + "\n");
             }
         } catch (IOException ex) {
             userMessage.ErrorExeption(ex);
         }
     }
+
+    public FileLoad(int i) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(fileChooser.getSelectedFile()))) {
+            while (reader.ready()) {
+                String tempString = reader.readLine().trim() + "\n";
+                if (tempString.startsWith("\n") |
+                        tempString.length() == 0 |
+                        !tempString.contains("@")) continue;
+                fileContain.append(tempString+"\n");
+            }
+        } catch (IOException ex) {
+            userMessage.ErrorExeption(ex);
+        }
+    }
+
+
 }
