@@ -1,8 +1,9 @@
 package com.guryanov.button;
 
 import com.guryanov.handler.DatabaseHandler;
-import com.guryanov.handler.NoticeHandler;
+
 import java.sql.SQLException;
+
 import static com.guryanov.ui.AppFrame.*;
 
 public class EraseDB {
@@ -10,11 +11,10 @@ public class EraseDB {
         try {
             new DatabaseHandler().eraseDB();
             tableModel.setRowCount(0);
+        statusString.setText("");
+        statusString.append("Erase completed");
         } catch (SQLException ex) {
-            new NoticeHandler().getSQLExceptionNotice(ex);
-
-        } finally {
-            statusString.append("\n"+"Erase DB " + status);
+            userMessage.ErrorExeption(ex);
         }
     }
 }

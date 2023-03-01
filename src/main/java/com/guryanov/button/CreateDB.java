@@ -1,19 +1,18 @@
 package com.guryanov.button;
 
 import com.guryanov.handler.*;
-import static com.guryanov.ui.AppFrame.*;
 
 import java.sql.SQLException;
+
+import static com.guryanov.ui.AppFrame.userMessage;
 
 public class CreateDB {
     public CreateDB() {
         try {
             new DatabaseHandler().createDB();
-            new NoticeHandler().createDB();
+            userMessage.InfoMessage("Create DB completed");
         } catch (SQLException ex) {
-            new NoticeHandler().getSQLExceptionNotice(ex);
-        } finally {
-            statusString.append("\n"+"DB create " + status);
+            userMessage.ErrorExeption(ex);
         }
     }
 }

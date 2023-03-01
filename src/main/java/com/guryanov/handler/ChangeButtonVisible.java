@@ -1,4 +1,4 @@
-package com.guryanov.button;
+package com.guryanov.handler;
 
 import com.guryanov.ui.AppFrame;
 
@@ -15,7 +15,7 @@ public class ChangeButtonVisible {
             AppFrame.createDB.setEnabled(false);
             AppFrame.deleteDB.setEnabled(false);
         } else {
-            AppFrame.buttonSaveToDB.setText("Save to DB");
+            AppFrame.buttonSaveToDB.setText("Add to DB");
             AppFrame.buttonLoadFromDB.setEnabled(true);
             AppFrame.buttonEraseDB.setEnabled(true);
             AppFrame.createDB.setEnabled(true);

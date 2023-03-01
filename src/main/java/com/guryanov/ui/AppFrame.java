@@ -1,22 +1,20 @@
 package com.guryanov.ui;
 
 import com.guryanov.button.*;
+import com.guryanov.config.DBType;
 import com.guryanov.handler.*;
 
 import javax.swing.*;
 import javax.swing.table.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import static com.guryanov.config.ConfigSetting.*;
 
 public class AppFrame extends JFrame {
-
+    public static UserMessage userMessage = new MessageHandler();
     public static JTextArea areaFileContain = new JTextArea("", 35, 30);
     public static JTextArea statusString = new JTextArea(5, 41);
-    public static String status = "";
-    public NoticeHandler notice = new NoticeHandler();
+
     public static String[] column_names = {"#", "name", "email", "send"};
     public static DefaultTableModel tableModel = new DefaultTableModel(column_names, 0) {
         @Override
@@ -108,27 +106,17 @@ public class AppFrame extends JFrame {
         prepareFile.addActionListener(e -> new PrepareFile(AppFrame.this));
         setting.addActionListener((ButtonHandler) e -> {
             JFrame frame = new JFrame();
-            frame.setBounds(550, 300, 300, 400);
+            frame.setBounds(550, 300, 300, 500);
             frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             JPanel panel = new JPanel(new BorderLayout());
-            JPanel panelNorth = new JPanel(new GridLayout(15, 1));
+            JPanel panelNorth = new JPanel(new GridLayout(16, 1));
             JPanel panelSouth = new JPanel();
 
-            panelNorth.add(new JLabel("DB name"));
-            JTextField field_db_schema = new JTextField(db_schema);
-            panelNorth.add(field_db_schema);
-
-            panelNorth.add(new JLabel("DB table name"));
-            JTextField field_db_table_name = new JTextField(db_table_name);
-            panelNorth.add(field_db_table_name);
-
-            panelNorth.add(new JLabel("DB table 'ColumnName'"));
-            JTextField field_db_table_columnName = new JTextField(db_table_columnName);
-            panelNorth.add(field_db_table_columnName);
-
-            panelNorth.add(new JLabel("DB table 'ColumnEmail'"));
-            JTextField field_db_table_columnEmail = new JTextField(db_table_columnEmail);
-            panelNorth.add(field_db_table_columnEmail);
+            panelNorth.add(new JLabel("DB type"));
+            Enum[] dbtype = {DBType.MySQL, DBType.PostgreSQL};
+            JComboBox field_dbtype = new JComboBox(dbtype);
+            field_dbtype.setSelectedItem(db_type);
+            panelNorth.add(field_dbtype);
 
             panelNorth.add(new JLabel("DB host"));
             JTextField field_db_host = new JTextField(db_host);
@@ -145,6 +133,22 @@ public class AppFrame extends JFrame {
             panelNorth.add(new JLabel("DB password"));
             JTextField field_db_secr = new JTextField(db_secr);
             panelNorth.add(field_db_secr);
+
+            panelNorth.add(new JLabel("DB name"));
+            JTextField field_db_schema = new JTextField(db_schema);
+            panelNorth.add(field_db_schema);
+
+            panelNorth.add(new JLabel("DB table name"));
+            JTextField field_db_table_name = new JTextField(db_table_name);
+            panelNorth.add(field_db_table_name);
+
+            panelNorth.add(new JLabel("DB table 'ColumnName'"));
+            JTextField field_db_table_columnName = new JTextField(db_table_columnName);
+            panelNorth.add(field_db_table_columnName);
+
+            panelNorth.add(new JLabel("DB table 'ColumnEmail'"));
+            JTextField field_db_table_columnEmail = new JTextField(db_table_columnEmail);
+            panelNorth.add(field_db_table_columnEmail);
 
             panelNorth.add(new JLabel("Email SMTP server"));
             JTextField field_email_smtp_server = new JTextField(email_smtp_server);
@@ -185,6 +189,7 @@ public class AppFrame extends JFrame {
             frame.setVisible(true);
 
             buttonSave.addActionListener(e1 -> {
+                db_type = (DBType) field_dbtype.getSelectedItem();
                 db_schema = field_db_schema.getText().trim();
                 db_table_name = field_db_table_name.getText().trim();
                 db_table_columnName = field_db_table_columnName.getText().trim();
@@ -218,8 +223,6 @@ public class AppFrame extends JFrame {
     private JPanel createCentralPanel() {
         RowSorter<TableModel> sorter = new TableRowSorter<>(tableModel);
         dbTable.setRowSorter(sorter);
-
-        buttonSaveToDB.setText("Save to DB");
         buttonLoadFromDB.setText("Load from DB");
         buttonEraseDB.setText("Erase DB");
         new ChangeButtonVisible();

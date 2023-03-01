@@ -4,18 +4,16 @@ import com.guryanov.handler.*;
 
 import java.sql.SQLException;
 
-import static com.guryanov.ui.AppFrame.status;
-import static com.guryanov.ui.AppFrame.statusString;
+import static com.guryanov.ui.AppFrame.*;
 
 public class DeleteDB {
     public DeleteDB() {
         try {
             new DatabaseHandler().dropDB();
-            new NoticeHandler().dbDrop();
+            userMessage.InfoMessage("DB deleted");
         } catch (SQLException ex) {
-            new NoticeHandler().getSQLExceptionNotice(ex);
-        } finally {
-            statusString.append("\n" + "DB delete " + status);
+            userMessage.ErrorExeption(ex);
+
         }
     }
 }

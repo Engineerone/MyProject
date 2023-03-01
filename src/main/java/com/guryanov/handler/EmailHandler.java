@@ -53,12 +53,10 @@ public class EmailHandler extends ConfigSetting {
                 tableModel.setValueAt("send", Integer.valueOf(resultString[0]), 3);
 
             } catch (SQLException ex) {
-                new NoticeHandler().getSQLExceptionNotice(ex);
+                userMessage.ErrorExeption(ex);
             } catch (MessagingException ex) {
-                statusString.append("\n" + ex.getMessage());
+                userMessage.ErrorExeption(ex);
             }
-
-            //return result;
         }
         dbTable.scrollRectToVisible(dbTable.getCellRect(result.size() - 15, 3, true));
     }

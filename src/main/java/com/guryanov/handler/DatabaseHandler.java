@@ -1,6 +1,6 @@
 package com.guryanov.handler;
 
-import com.guryanov.ui.AppFrame;
+import com.guryanov.config.DBType;
 import com.guryanov.config.ConfigSetting;
 
 import java.sql.*;
@@ -13,16 +13,19 @@ import static com.guryanov.ui.AppFrame.*;
 public class DatabaseHandler extends ConfigSetting {
     private String sqlQuery = "";
 
-
     public Connection getDbConnection() throws SQLException {
-        String connectionString = "jdbc:mysql://" + db_host + ":" + db_port + "/" + db_schema;
+        String connectionString = null;
+        if (db_type == DBType.MySQL)
+            connectionString = "jdbc:mysql://" + db_host + ":" + db_port + "/" + db_schema;
+        else if (db_type == DBType.PostgreSQL)
+            connectionString = "jdbc:postgresql://" + db_host + ":" + db_port + "/" + db_schema;
         Connection dbConnection = DriverManager.getConnection(connectionString, db_user, db_secr);
         return dbConnection;
     }
 
     public void insertRow(Set<List<String>> result) throws SQLException {
         try (Connection connection = getDbConnection()) {
-            for (List<String> resultString:result) {
+            for (List<String> resultString : result) {
                 try {
                     sqlQuery =
                             "INSERT INTO "
@@ -36,12 +39,12 @@ public class DatabaseHandler extends ConfigSetting {
                     prSt.setString(2, resultString.get(1));
                     prSt.setString(3, "");
                     prSt.executeUpdate();
-                    statusString.append("\n" + "Line written -> " + resultString.get(0) + " " + resultString.get(1));
+                    statusString.append("\n" + "Line written " + resultString.get(0) + " " + resultString.get(1));
                 } catch (SQLIntegrityConstraintViolationException e) {
-                    statusString.append("\n" + "Record exists -> " + resultString.get(0) + " " + resultString.get(1));
+                    statusString.append("\n" + "Email exists: " + resultString.get(0) + " " + resultString.get(1) + " :skip");
                 }
+
             }
-            AppFrame.status = "completed";
         }
     }
 
@@ -60,7 +63,6 @@ public class DatabaseHandler extends ConfigSetting {
             prSt.setString(2, name);
             prSt.setString(3, email);
             prSt.executeUpdate();
-            AppFrame.status = "completed";
         } catch (SQLIntegrityConstraintViolationException e) {
             statusString.append("\n" + e.getMessage());
         }
@@ -73,7 +75,6 @@ public class DatabaseHandler extends ConfigSetting {
         try (PreparedStatement prSt = getDbConnection()
                 .prepareStatement(sqlQuery)) {
             prSt.executeUpdate();
-            AppFrame.status = "completed";
         }
     }
 
@@ -94,7 +95,6 @@ public class DatabaseHandler extends ConfigSetting {
                 dbString[2] = resultSet.getString(3);
                 dbString[3] = resultSet.getString(4);
                 result.add(dbString);
-                AppFrame.status = "completed";
             }
             return result;
         }
@@ -120,7 +120,6 @@ public class DatabaseHandler extends ConfigSetting {
                 .prepareStatement(sqlQuery)) {
             {
                 prSt.execute();
-                AppFrame.status = "completed";
             }
         }
     }
@@ -132,7 +131,6 @@ public class DatabaseHandler extends ConfigSetting {
         try (PreparedStatement prSt = getDbConnection()
                 .prepareStatement(sqlQuery)) {
             prSt.execute();
-            AppFrame.status = "completed";
         }
     }
 }

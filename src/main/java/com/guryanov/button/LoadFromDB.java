@@ -17,10 +17,10 @@ public class LoadFromDB {
                 String[] value = result.get(i);
                 tableModel.insertRow(i, new Object[]{value[0], value[1], value[2], value[3]});
             }
+            statusString.setText("");
+            statusString.append("Load completed");
         } catch (SQLException ex) {
-            new NoticeHandler().getSQLExceptionNotice(ex);
-        } finally {
-            statusString.append("\n" + "Load from DB " + status);
+            userMessage.ErrorExeption(ex);
         }
     }
 }

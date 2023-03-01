@@ -1,6 +1,7 @@
 package com.guryanov.config;
 
 public class ConfigSetting {
+    public static Enum db_type = DBType.MySQL;
     public static String db_schema = "projectdb";
     public static String db_table_name = "users";
     public static String db_table_columnName = "name";
