@@ -1,5 +1,7 @@
 package com.guryanov.handler;
 
+import com.guryanov.interf.UserMessage;
+
 import javax.swing.*;
 
 import static com.guryanov.ui.AppFrame.statusString;

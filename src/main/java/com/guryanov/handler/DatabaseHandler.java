@@ -6,7 +6,6 @@ import com.guryanov.config.ConfigSetting;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import static com.guryanov.ui.AppFrame.*;
 
@@ -23,7 +22,7 @@ public class DatabaseHandler extends ConfigSetting {
         return dbConnection;
     }
 
-    public void insertRow(Set<List<String>> result) throws SQLException {
+    public void insertRow(List<List<String>> result) throws SQLException {
         try (Connection connection = getDbConnection()) {
             for (List<String> resultString : result) {
                 try {
@@ -41,30 +40,41 @@ public class DatabaseHandler extends ConfigSetting {
                     prSt.executeUpdate();
                     statusString.append("\n" + "Line written " + resultString.get(0) + " " + resultString.get(1));
                 } catch (SQLIntegrityConstraintViolationException e) {
-                    statusString.append("\n" + "Email exists: " + resultString.get(0) + " " + resultString.get(1) + " :skip");
+                    statusString.append("\n" + "Email exists SKIP: " + resultString.get(0) + " " + resultString.get(1));
                 }
 
             }
         }
     }
 
-    public void updatetRow(int index, String name, String email) throws SQLException {
-        sqlQuery =
-                "UPDATE "
-                        + db_table_name
-                        + " SET "
-                        + db_table_columnSend + "=?"
-                        + "WHERE "
-                        + db_table_columnName + "=?"
-                        + "AND "
-                        + db_table_columnEmail + "=?";
-        try (PreparedStatement prSt = getDbConnection().prepareStatement(sqlQuery)) {
-            prSt.setString(1, "send");
-            prSt.setString(2, name);
-            prSt.setString(3, email);
-            prSt.executeUpdate();
-        } catch (SQLIntegrityConstraintViolationException e) {
-            statusString.append("\n" + e.getMessage());
+    public void updatetRow(List<List<String>> result) throws SQLException {
+        try (Connection connection = getDbConnection()) {
+            for (List<String> resultString : result) {
+                try {
+                    sqlQuery =
+                            "UPDATE "
+                                    + db_table_name
+                                    + " SET "
+                                    + db_table_columnSend + "=?"
+                                    + "WHERE "
+                                    + db_table_columnName + "=?"
+                                    + "AND "
+                                    + db_table_columnEmail + "=?";
+
+                    PreparedStatement prSt = connection.prepareStatement(sqlQuery);
+                    prSt.setString(1, "send");
+                    prSt.setString(2, resultString.get(1));
+                    prSt.setString(3, resultString.get(2));
+                    prSt.executeUpdate();
+//                    ResultSet resultSet = prSt.getResultSet();
+//                    if (resultSet == null)
+//                        statusString.append("\nRow not found in database, SEND not save in DB: " + resultString.get(1) + " " + resultString.get(2));
+                } catch (
+                        SQLIntegrityConstraintViolationException e) {
+                    statusString.append("\n" + e.getMessage());
+                }
+
+            }
         }
     }
 

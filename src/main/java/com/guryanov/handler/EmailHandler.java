@@ -29,35 +29,38 @@ public class EmailHandler extends ConfigSetting {
         session = Session.getDefaultInstance(properties, auth);
     }
 
-    public void sendMessage(List<String[]> result) {
-
-        for (String[] resultString : result) {
+    public void sendMessage(List<List<String>> result) {
+        for (List<String> resultString : result) {
             try {
                 Message message;
                 InternetAddress email_from = new InternetAddress(email_fieldFrom);
-                InternetAddress email_to = new InternetAddress(resultString[2]);
+                InternetAddress email_to = new InternetAddress(resultString.get(2));
                 message = new MimeMessage(session);
                 message.setFrom(email_from);
                 message.setRecipient(Message.RecipientType.TO, email_to);
-                message.setSubject(resultString[3]);
+                message.setSubject(resultString.get(3));
                 Multipart mmp = new MimeMultipart();
                 MimeBodyPart bodyPart = new MimeBodyPart();
-                bodyPart.setContent(resultString[4], "text/plain; charset=utf-8");
+                bodyPart.setContent(resultString.get(4), "text/plain; charset=utf-8");
                 mmp.addBodyPart(bodyPart);
                 message.setContent(mmp);
                 if (realSend) {
                     Transport.send(message);
                 }
-                if (useWithDB)
-                    new DatabaseHandler().updatetRow(Integer.valueOf(resultString[0]), resultString[1], resultString[2]);
-                tableModel.setValueAt("send", Integer.valueOf(resultString[0]), 3);
-
-            } catch (SQLException ex) {
-                userMessage.ErrorExeption(ex);
             } catch (MessagingException ex) {
                 userMessage.ErrorExeption(ex);
             }
+            tableModel.setValueAt("send", Integer.valueOf(resultString.get(0)), 3);
         }
+
+        if (useWithDB) {
+            try {
+                new DatabaseHandler().updatetRow(result);
+            } catch (SQLException ex) {
+                userMessage.ErrorExeption(ex);
+            }
+        }
+
         dbTable.scrollRectToVisible(dbTable.getCellRect(result.size() - 15, 3, true));
     }
 }

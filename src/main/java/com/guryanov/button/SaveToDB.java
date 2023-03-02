@@ -1,39 +1,40 @@
 package com.guryanov.button;
 
-import com.guryanov.handler.*;
+import com.guryanov.handler.DatabaseHandler;
+
+import java.sql.Timestamp;
+import java.sql.SQLException;
+import java.util.*;
 
 import static com.guryanov.ui.AppFrame.*;
 
-import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.util.*;
 
 public class SaveToDB {
-    public SaveToDB(boolean useDB) {
-        FileContainCheck fileContainCheck = new FileContainCheck(areaFileContain);
-        Set<List<String>> result = fileContainCheck.result;
-        if (result.size() > 0) {
-            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-            statusString.setText("");
-            statusString.append("Save start: " + timestamp);
+    public SaveToDB() {
+        List<List<String>> result = new ArrayList<>();
+        String name, email;
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+        statusString.setText("");
+        statusString.append("Save start: " + timestamp);
+        if (tableModel.getRowCount() > 0) {
             try {
-                if (!useDB) {
-                    tableModel.setRowCount(0);
-                    int i = 0;
-                    for (List<String> resultString : result) {
-                        tableModel.insertRow(i, new Object[]{i + 1, resultString.get(0), resultString.get(1), ""});
-                        i++;
-                    }
-                } else
-                    new DatabaseHandler().insertRow(result);
+                for (int i = 0; i < tableModel.getRowCount(); i++) {
+                    List<String> resultString;
+                    name = tableModel.getValueAt(i, 1).toString();
+                    email = tableModel.getValueAt(i, 2).toString();
+                    resultString = Arrays.asList(name, email);
+                    result.add(resultString);
+                }
+                new DatabaseHandler().insertRow(result);
                 statusString.append("\nSave completed");
             } catch (SQLException ex) {
                 userMessage.ErrorExeption(ex);
             }
             timestamp = new Timestamp(System.currentTimeMillis());
             statusString.append("\n" + "Save end: " + timestamp);
+        } else {
+            statusString.setText("");
+            statusString.append("List empty");
         }
-
     }
 }
-

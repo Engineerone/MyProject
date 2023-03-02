@@ -2,52 +2,47 @@ package com.guryanov.handler;
 
 
 import javax.swing.*;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static com.guryanov.ui.AppFrame.*;
 
 public class FileContainCheck {
 
     public Set<List<String>> result;
+    public List<String> exept;
 
-  public   FileContainCheck(JTextArea areaFileContain) {
+    public FileContainCheck(JTextArea areaFileContain) {
         result = new HashSet<>();
-        if (areaFileContain.getText().length() == 0 | areaFileContain.getText().startsWith("File format")) {
-            statusString.append("\n" + "File area is empty");
-            result.clear();
-            return;
-        }
-        String areaFileContainString = areaFileContain.getText();
-        String name, email;
-        String tempString = "";
-        boolean emailConfirmed;
-
         Set<List<String>> emailDuplicatedList = new HashSet<>();
-        for (int i = 0; i < areaFileContainString.length(); i++) {
-            if (areaFileContainString.charAt(i) != '\n') {
-                tempString += areaFileContainString.charAt(i);
+        Scanner scanner = new Scanner(areaFileContain.getText());
+        String name, email, tempString;
+        boolean emailConfirmed;
+        while (scanner.hasNext()) {
+            tempString = scanner.nextLine().trim();
+            if (tempString.startsWith("\n") ||
+                    tempString.length() == 0 ||
+                    !tempString.contains("\t") ||
+                    !tempString.contains("@")) {
+                statusString.append("\nThe string does not contain name and email data");
+                continue;
+            }
+            List<String> resultString;
+            int tabStatement = tempString.indexOf('\t');
+            name = tempString.substring(0, tabStatement);
+            email = tempString.substring(tabStatement + 1).toLowerCase();
+            emailConfirmed = new EmailCheck(name, email).emailConfirmed;
+            if (!emailConfirmed) {
+                statusString.append("\nEmail does not match the format: " + name + " " + email);
+                continue;
+            }
+            resultString = Arrays.asList(name, email);
+            if (emailDuplicatedList.add(Arrays.asList(email))) {
+                result.add(resultString);
+                statusString.append("\n" + "Line load: " + resultString.get(0) + " " + resultString.get(1));
             } else {
-                List<String> resultString;
-                int tabStatement = tempString.indexOf('\t');
-                name = tempString.substring(0, tabStatement);
-                email = tempString.substring(tabStatement + 1).toLowerCase();
-                tempString = "";
-                emailConfirmed = new EmailCheck(name, email).emailConfirmed;
-                if (!emailConfirmed) {
-                    statusString.append("\nEmail does not match the format: " + name + " " + email);
-                    continue;
-                }
-                resultString = Arrays.asList(name, email);
-                if (emailDuplicatedList.add(Arrays.asList(email))) {
-                    result.add(resultString);
-                    statusString.append("\n" + "Line load: " + resultString.get(0) + " " + resultString.get(1));
-                } else {
-                    statusString.append("\n" + "Email exist: " + resultString.get(0) + " " + resultString.get(1) + " :skip");
-                }
+                statusString.append("\n" + "Email exist, SKIP: " + resultString.get(0) + " " + resultString.get(1));
             }
         }
+        scanner.close();
     }
 }

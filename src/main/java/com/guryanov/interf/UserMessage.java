@@ -1,4 +1,4 @@
-package com.guryanov.handler;
+package com.guryanov.interf;
 
 public interface UserMessage {
     void ErrorExeption(Exception ex);

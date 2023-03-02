@@ -3,6 +3,9 @@ package com.guryanov.ui;
 import com.guryanov.button.*;
 import com.guryanov.config.DBType;
 import com.guryanov.handler.*;
+import com.guryanov.interf.ButtonHandler;
+import com.guryanov.interf.FileAction;
+import com.guryanov.interf.UserMessage;
 
 import javax.swing.*;
 import javax.swing.table.*;
@@ -11,6 +14,8 @@ import java.awt.*;
 import static com.guryanov.config.ConfigSetting.*;
 
 public class AppFrame extends JFrame {
+
+    public static FileAction fileAction = new FileHandler();
     public static UserMessage userMessage = new MessageHandler();
     public static JTextArea areaFileContain = new JTextArea("", 35, 30);
     public static JTextArea statusString = new JTextArea(5, 41);
@@ -31,6 +36,7 @@ public class AppFrame extends JFrame {
     JPanel rightSidePanelSouth = new JPanel(new BorderLayout());
     JButton buttonSendEmail = new JButton();
     JButton buttonSendEmailStop = new JButton();
+    public static JButton buttonLoadIntoTable = new JButton();
     public static JButton buttonLoadFromDB = new JButton();
     public static JButton buttonEraseDB = new JButton();
     public static JButton buttonSaveToDB = new JButton();
@@ -214,7 +220,7 @@ public class AppFrame extends JFrame {
 
     private JPanel createLeftSidePanel() {
         areaFileContain.setEditable(false);
-        areaFileContain.setText("File format:\nname< tab >email");
+        areaFileContain.setText("File format:\nname< tab >email\n\nExample:\nname\temail@domain.com");
         areaFileContain.append("\n\nIf your file only contains emails,\nuse the " + "Prepare file" + " item to convert\nit to name< tab >email format");
         leftSidePanel.add(new JScrollPane(areaFileContain));
         return leftSidePanel;
@@ -223,11 +229,14 @@ public class AppFrame extends JFrame {
     private JPanel createCentralPanel() {
         RowSorter<TableModel> sorter = new TableRowSorter<>(tableModel);
         dbTable.setRowSorter(sorter);
+        buttonLoadIntoTable.setText("Load into table");
+        buttonSaveToDB.setText("Add to DB");
         buttonLoadFromDB.setText("Load from DB");
         buttonEraseDB.setText("Erase DB");
         new ChangeButtonVisible();
         statusString.setText("Status string");
         statusString.setEditable(false);
+        centralPanelNorth.add(buttonLoadIntoTable);
         centralPanelNorth.add(buttonSaveToDB);
         centralPanelNorth.add(buttonLoadFromDB);
         centralPanelNorth.add(buttonEraseDB);
@@ -243,7 +252,8 @@ public class AppFrame extends JFrame {
         centralPanel.add(centralPanelNorth, BorderLayout.NORTH);
         centralPanel.add(centralPanelCenter, BorderLayout.CENTER);
         centralPanel.add(centralPanelSouth, BorderLayout.SOUTH);
-        buttonSaveToDB.addActionListener(e -> new SaveToDB(useWithDB));
+        buttonLoadIntoTable.addActionListener(e->new LoadIntoTable());
+        buttonSaveToDB.addActionListener(e -> new SaveToDB());
         buttonEraseDB.addActionListener(e -> new EraseDB());
         buttonLoadFromDB.addActionListener(e -> new LoadFromDB());
         return centralPanel;
