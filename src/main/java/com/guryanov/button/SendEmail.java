@@ -17,13 +17,13 @@ public class SendEmail implements Runnable {
     public void run() {
         int count;
         timestamp = new Timestamp(System.currentTimeMillis());
-        statusString.append("\nSend start -> " + timestamp);
+        statusString.append("\nsend start -> " + timestamp);
         String name, email, emalSubject, emailText;
         EmailHandler mymail = new EmailHandler();
         List<List<String>> result = new ArrayList<>();
         for (int i = 0; i < tableModel.getRowCount(); i++) {
             if (tableModel.getValueAt(i, 3).toString().equals("send")) {
-                statusString.append("\nEmail already sent -> " + tableModel.getValueAt(i, 2));
+                statusString.append("\nemail already sent -> " + tableModel.getValueAt(i, 2));
                 continue;
             }
             List<String> resultString;
@@ -35,8 +35,8 @@ public class SendEmail implements Runnable {
             result.add(resultString);
         }
         count = mymail.sendMessage(result);
-        statusString.append("\nSend completed (" + count + " email)");
+        statusString.append("\nsend completed (" + count + " email)");
         timestamp = new Timestamp(System.currentTimeMillis());
-        statusString.append("\nSend end -> " + timestamp);
+        statusString.append("\nsend end -> " + timestamp);
     }
 }

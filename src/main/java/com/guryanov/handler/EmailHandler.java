@@ -47,9 +47,10 @@ public class EmailHandler extends ConfigSetting {
                 message.setContent(mmp);
                 if (realSend) {
                     Transport.send(message);
+                    statusString.append("\nemail sent -> " + resultString.get(2));
+                    count++;
                 }
-                count++;
-              //  statusString.append("\nEmail sent -> " + resultString.get(2));
+
             } catch (MessagingException ex) {
                 statusString.append("\n" + ex.getMessage());
             }
@@ -58,12 +59,13 @@ public class EmailHandler extends ConfigSetting {
 
         if (useWithDB) {
             try {
+                statusString.append("\nDB update start");
                 new DatabaseHandler().updateRow(result);
+                statusString.append("\nDB update end");
             } catch (SQLException ex) {
                 userMessage.error(ex);
             }
         }
-
         dbTable.scrollRectToVisible(dbTable.getCellRect(result.size() - 15, 3, true));
         return count;
     }

@@ -25,7 +25,7 @@ public class FileMenu {
             areaFileContain.setText("");
             areaFileContain.append(String.valueOf(fileAction.load((file))));
             //   statusString.setText("");
-            statusString.append("\nFile loaded -> "+inputFilePath);
+            statusString.append("\nfile loaded -> "+inputFilePath);
         }
     }
 }

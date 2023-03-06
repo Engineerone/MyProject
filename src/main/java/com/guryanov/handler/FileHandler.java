@@ -27,7 +27,7 @@ public class FileHandler implements FileAction {
         String outputFilePath = fileCurrentDirectory + "\\" + fileName + "-out.txt";
         try (FileWriter fileWriter = new FileWriter((outputFilePath))) {
             fileWriter.write(String.valueOf(stringBuffer));
-            userMessage.info("\nSave file completed -> " + outputFilePath);
+            userMessage.info("\nsave file completed -> " + outputFilePath);
         } catch (IOException ex) {
             userMessage.error(ex);
         }

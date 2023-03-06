@@ -20,7 +20,7 @@ public class LoadFromDB {
                 count++;
             }
             //statusString.setText("");
-            statusString.append("\nLoad completed (" + count + " rows)");
+            statusString.append("\nload completed (" + count + " rows)");
         } catch (SQLException ex) {
             userMessage.error(ex);
         }

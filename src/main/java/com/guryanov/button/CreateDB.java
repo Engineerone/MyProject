@@ -10,7 +10,7 @@ public class CreateDB {
     public static void create() {
         try {
             new DatabaseHandler().createDB();
-            userMessage.info("Create DB completed");
+            userMessage.info("create DB completed");
         } catch (SQLException ex) {
             userMessage.error(ex);
         }

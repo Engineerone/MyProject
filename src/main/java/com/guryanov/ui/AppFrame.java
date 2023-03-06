@@ -39,6 +39,7 @@ public class AppFrame extends JFrame {
     public static JButton buttonLoadFromDB = new JButton();
     public static JButton buttonEraseDB = new JButton();
     public static JButton buttonSaveToDB = new JButton();
+    public static JButton buttonSaveStop = new JButton();
     JPanel centralPanel = new JPanel(new BorderLayout());
     JPanel centralPanelNorth = new JPanel(new FlowLayout());
     JPanel centralPanelCenter = new JPanel(new FlowLayout());
@@ -240,22 +241,24 @@ public class AppFrame extends JFrame {
     private JPanel createCentralPanel() {
         RowSorter<TableModel> sorter = new TableRowSorter<>(tableModel);
         dbTable.setRowSorter(sorter);
-        buttonLoadIntoTable.setText("Load into table");
+        buttonLoadIntoTable.setText("Load table");
         buttonSaveToDB.setText("Add to DB");
-        buttonLoadFromDB.setText("Load from DB");
+        buttonSaveStop.setText("Add stop");
+        buttonLoadFromDB.setText("Load DB");
         buttonEraseDB.setText("Erase DB");
         ChangeButtonVisible.change();
         //statusString.setText("Status string");
         statusString.setEditable(false);
         centralPanelNorth.add(buttonLoadIntoTable);
         centralPanelNorth.add(buttonSaveToDB);
+        centralPanelNorth.add(buttonSaveStop);
         centralPanelNorth.add(buttonLoadFromDB);
         centralPanelNorth.add(buttonEraseDB);
         setJTableColumnsWidth(dbTable, 450, 10, 40, 40, 10);
         centralPanelCenter.add(new JScrollPane(dbTable));
         statusString.setCaretPosition(statusString.getDocument().getLength());
         JScrollPane scrollStatus = new JScrollPane(statusString);
-        scrollStatus.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollStatus.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         scrollStatus.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 
         centralPanelSouth.add(scrollStatus);
@@ -263,9 +266,10 @@ public class AppFrame extends JFrame {
         centralPanel.add(centralPanelCenter, BorderLayout.CENTER);
         centralPanel.add(centralPanelSouth, BorderLayout.SOUTH);
         buttonLoadIntoTable.addActionListener(e -> LoadIntoTable.load());
-        buttonSaveToDB.addActionListener(e -> SaveToDB.save());
+        buttonSaveToDB.addActionListener(e -> SaveToDBStart.start());
         buttonEraseDB.addActionListener(e -> EraseDB.erase());
         buttonLoadFromDB.addActionListener(e -> LoadFromDB.load());
+        buttonSaveStop.addActionListener(e -> SaveToDBStop.stop());
         return centralPanel;
     }
 
@@ -282,8 +286,8 @@ public class AppFrame extends JFrame {
         rightSidePanelSouth.add(rightSidePanelSouthButton);
         rightSidePanel.add(rightSidePanelNorth, BorderLayout.NORTH);
         rightSidePanel.add(rightSidePanelSouth, BorderLayout.SOUTH);
-        buttonSendEmail.addActionListener(e -> EmailSendStart.start());
-        buttonSendEmailStop.addActionListener(e -> EmailSendStop.stop());
+        buttonSendEmail.addActionListener(e -> SendEmailStart.start());
+        buttonSendEmailStop.addActionListener(e -> SendEmailStop.stop());
         return rightSidePanel;
     }
 }

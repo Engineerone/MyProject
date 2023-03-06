@@ -33,12 +33,13 @@ public class DatabaseHandler extends ConfigSetting {
                     prSt.setString(2, resultString.get(1));
                     prSt.setString(3, "");
                     prSt.executeUpdate();
-                    //statusString.append("\n" + "Line written " + resultString.get(0) + " " + resultString.get(1));
+                    statusString.append("\n" + count + " line written -> " + resultString.get(0) + " " + resultString.get(1));
+
                     count++;
                 } catch (SQLIntegrityConstraintViolationException e) {
-                    statusString.append("\n" + "Email exists in DB: " + resultString.get(0) + " " + resultString.get(1));
+                    statusString.append("\n" + "email exists in DB -> " + resultString.get(0) + " " + resultString.get(1));
                 }
-
+                statusString.setCaretPosition(statusString.getDocument().getLength() - 3);
             }
         }
         return count;
@@ -54,10 +55,12 @@ public class DatabaseHandler extends ConfigSetting {
                     prSt.setString(2, resultString.get(1));
                     prSt.setString(3, resultString.get(2));
                     prSt.executeUpdate();
+                    statusString.append("\n" + "line update -> " + resultString.get(1) + " " + resultString.get(2));
                 } catch (
                         SQLIntegrityConstraintViolationException e) {
                     statusString.append("\n" + e.getMessage());
                 }
+                statusString.setCaretPosition(statusString.getDocument().getLength() - 3);
             }
         }
     }

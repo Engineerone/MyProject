@@ -11,7 +11,7 @@ public class FileCheck {
     public static Set<List<String>> checkFileLoadTable(JTextArea areaFileContain) {
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         //  statusString.setText("");
-        statusString.append("\nLoad start: " + timestamp);
+        statusString.append("\nload start: " + timestamp);
         Set<List<String>> result = new HashSet<>();
         Set<List<String>> emailDuplicatedList = new HashSet<>();
         Scanner scanner = new Scanner(areaFileContain.getText());
@@ -24,7 +24,7 @@ public class FileCheck {
                     tempString.length() == 0 ||
                     !tempString.contains("\t") ||
                     !tempString.contains("@")) {
-                statusString.append("\nString error -> " + tempString);
+                statusString.append("\nstring error -> " + tempString);
                 continue;
             }
             List<String> resultString;
@@ -33,30 +33,30 @@ public class FileCheck {
             email = tempString.substring(tabStatement + 1).toLowerCase();
             emailConfirmed = EmailCheck.check(email);
             if (!emailConfirmed) {
-                statusString.append("\nEmail check error -> " + email);
+                statusString.append("\nemail check error -> " + email);
                 continue;
             }
             resultString = Arrays.asList(name, email);
             if (emailDuplicatedList.add(Arrays.asList(email))) {
                 result.add(resultString);
                 count++;
-                //statusString.append("\n" + "String load -> " + resultString.get(0) + " " + resultString.get(1));
+                //statusString.append("\n" + "string load -> " + resultString.get(0) + " " + resultString.get(1));
             } else {
-                statusString.append("\n" + "Email duplicate -> " + resultString.get(0) + " " + resultString.get(1));
+                statusString.append("\n" + "email duplicate -> " + resultString.get(0) + " " + resultString.get(1));
 
             }
         }
-        statusString.append("\nLoad completed (" + count + " rows)");
+        statusString.append("\nload completed (" + count + " rows)");
         scanner.close();
         timestamp = new Timestamp(System.currentTimeMillis());
-        statusString.append("\n" + "Load end -> " + timestamp);
+        statusString.append("\n" + "load end -> " + timestamp);
         return result;
     }
 
     public static StringBuffer checkFileAddName(StringBuffer stringBuffer) {
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         //  statusString.setText("");
-        statusString.append("\nSave start -> " + timestamp);
+        statusString.append("\nsave start -> " + timestamp);
         StringBuffer result = new StringBuffer();
         Set<List<String>> emailDuplicatedList = new HashSet<>();
         Scanner scanner = new Scanner(String.valueOf(stringBuffer));
@@ -68,7 +68,7 @@ public class FileCheck {
             if (tempString.startsWith("\n") ||
                     tempString.length() == 0 ||
                     !tempString.contains("@")) {
-                statusString.append("\nString error -> " + tempString);
+                statusString.append("\nstring error -> " + tempString);
                 continue;
             }
             List<String> resultString;
@@ -77,7 +77,7 @@ public class FileCheck {
             email = tempString.toLowerCase();
             emailConfirmed = EmailCheck.check(email);
             if (!emailConfirmed) {
-                statusString.append("\nEmail check error -> " + email);
+                statusString.append("\nemail check error -> " + email);
                 continue;
             }
             resultString = Arrays.asList(name, email);
@@ -86,13 +86,13 @@ public class FileCheck {
                 count++;
                 //statusString.append("\n" + "String load -> " + resultString.get(0) + " " + resultString.get(1));
             } else {
-                statusString.append("\n" + "Email duplicate -> " + resultString.get(0) + " " + resultString.get(1));
+                statusString.append("\n" + "email duplicate -> " + resultString.get(0) + " " + resultString.get(1));
             }
         }
         scanner.close();
-        statusString.append("\nSave completed (" + count + " rows)");
+        statusString.append("\nsave completed (" + count + " rows)");
         timestamp = new Timestamp(System.currentTimeMillis());
-        statusString.append("\n" + "Save end -> " + timestamp);
+        statusString.append("\n" + "save end -> " + timestamp);
         return result;
     }
 }
