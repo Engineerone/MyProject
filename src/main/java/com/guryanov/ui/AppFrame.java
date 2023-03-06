@@ -15,6 +15,8 @@ import static com.guryanov.config.ConfigSetting.*;
 
 public class AppFrame extends JFrame {
 
+    public static boolean saveStop = false;
+    public static boolean sendEmailStop = false;
     public static FileAction fileAction = new FileHandler();
     public static UserMessage userMessage = new MessageHandler();
     public static JTextArea areaFileContain = new JTextArea("", 35, 30);

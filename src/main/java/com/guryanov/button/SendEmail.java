@@ -35,7 +35,7 @@ public class SendEmail implements Runnable {
             result.add(resultString);
         }
         count = mymail.sendMessage(result);
-        statusString.append("\nsend completed (" + count + " email)");
+        statusString.append("\nsend completed (real sent " + count + " email)");
         timestamp = new Timestamp(System.currentTimeMillis());
         statusString.append("\nsend end -> " + timestamp);
     }

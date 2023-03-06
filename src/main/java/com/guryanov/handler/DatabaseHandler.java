@@ -25,43 +25,44 @@ public class DatabaseHandler extends ConfigSetting {
     public int insertRow(List<List<String>> result) throws SQLException {
         int count = 0;
         try (Connection connection = getDBConnection()) {
-            for (List<String> resultString : result) {
-                try {
-                    queryString = sqlQuery.getInsert((DBType) db_type);
-                    PreparedStatement prSt = connection.prepareStatement(queryString);
-                    prSt.setString(1, resultString.get(0));
-                    prSt.setString(2, resultString.get(1));
-                    prSt.setString(3, "");
-                    prSt.executeUpdate();
-                    statusString.append("\n" + count + " line written -> " + resultString.get(0) + " " + resultString.get(1));
 
-                    count++;
-                } catch (SQLIntegrityConstraintViolationException e) {
-                    statusString.append("\n" + "email exists in DB -> " + resultString.get(0) + " " + resultString.get(1));
-                }
-                statusString.setCaretPosition(statusString.getDocument().getLength() - 3);
+            for (List<String> resultString : result) {
+                if (!saveStop) {
+                    try {
+                        queryString = sqlQuery.getInsert((DBType) db_type);
+                        PreparedStatement prSt = connection.prepareStatement(queryString);
+                        prSt.setString(1, resultString.get(0));
+                        prSt.setString(2, resultString.get(1));
+                        prSt.setString(3, "");
+                        prSt.executeUpdate();
+                        statusString.append("\n" + count + " line written -> " + resultString.get(0) + " " + resultString.get(1));
+
+                        count++;
+                    } catch (SQLIntegrityConstraintViolationException e) {
+                        statusString.append("\n" + "email exists in DB -> " + resultString.get(0) + " " + resultString.get(1));
+                    }
+                    statusString.setCaretPosition(statusString.getDocument().getLength() - 3);
+                } else break;
             }
         }
+        saveStop = false;
         return count;
     }
 
-    public void updateRow(List<List<String>> result) throws SQLException {
+    public void updateRow(String name, String email) throws SQLException {
         try (Connection connection = getDBConnection()) {
-            for (List<String> resultString : result) {
-                try {
-                    queryString = sqlQuery.getUpdate((DBType) db_type);
-                    PreparedStatement prSt = connection.prepareStatement(queryString);
-                    prSt.setString(1, "send");
-                    prSt.setString(2, resultString.get(1));
-                    prSt.setString(3, resultString.get(2));
-                    prSt.executeUpdate();
-                    statusString.append("\n" + "line update -> " + resultString.get(1) + " " + resultString.get(2));
-                } catch (
-                        SQLIntegrityConstraintViolationException e) {
-                    statusString.append("\n" + e.getMessage());
-                }
-                statusString.setCaretPosition(statusString.getDocument().getLength() - 3);
+            try {
+                queryString = sqlQuery.getUpdate((DBType) db_type);
+                PreparedStatement prSt = connection.prepareStatement(queryString);
+                prSt.setString(1, "send");
+                prSt.setString(2, name);
+                prSt.setString(3, email);
+                prSt.executeUpdate();
+            } catch (
+                    SQLIntegrityConstraintViolationException e) {
+                statusString.append("\n" + e.getMessage());
             }
+            statusString.setCaretPosition(statusString.getDocument().getLength() - 3);
         }
     }
 

@@ -19,7 +19,6 @@ public class LoadFromDB {
                 tableModel.insertRow(i, new Object[]{value[0], value[1], value[2], value[3]});
                 count++;
             }
-            //statusString.setText("");
             statusString.append("\nload completed (" + count + " rows)");
         } catch (SQLException ex) {
             userMessage.error(ex);

@@ -10,7 +10,6 @@ public class FileCheck {
 
     public static Set<List<String>> checkFileLoadTable(JTextArea areaFileContain) {
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-        //  statusString.setText("");
         statusString.append("\nload start: " + timestamp);
         Set<List<String>> result = new HashSet<>();
         Set<List<String>> emailDuplicatedList = new HashSet<>();
@@ -40,7 +39,6 @@ public class FileCheck {
             if (emailDuplicatedList.add(Arrays.asList(email))) {
                 result.add(resultString);
                 count++;
-                //statusString.append("\n" + "string load -> " + resultString.get(0) + " " + resultString.get(1));
             } else {
                 statusString.append("\n" + "email duplicate -> " + resultString.get(0) + " " + resultString.get(1));
 
@@ -84,7 +82,6 @@ public class FileCheck {
             if (emailDuplicatedList.add(Arrays.asList(email))) {
                 result.append(name + "\t" + email + "\n");
                 count++;
-                //statusString.append("\n" + "String load -> " + resultString.get(0) + " " + resultString.get(1));
             } else {
                 statusString.append("\n" + "email duplicate -> " + resultString.get(0) + " " + resultString.get(1));
             }

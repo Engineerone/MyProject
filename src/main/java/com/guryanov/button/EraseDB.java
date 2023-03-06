@@ -10,7 +10,6 @@ public class EraseDB {
 public static void erase() {
         try {
             new DatabaseHandler().eraseDB();
-          //  statusString.setText("");
             statusString.append("\nerase completed");
         } catch (SQLException ex) {
             userMessage.error(ex);

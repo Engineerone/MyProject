@@ -15,7 +15,6 @@ public class SaveToDB implements Runnable {
         String name, email;
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         int count;
-        // statusString.setText("");
         statusString.append("\nsave start -> " + timestamp);
         if (tableModel.getRowCount() > 0) {
             try {
