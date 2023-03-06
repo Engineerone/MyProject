@@ -47,9 +47,9 @@ public class EmailHandler extends ConfigSetting {
                     mmp.addBodyPart(bodyPart);
                     message.setContent(mmp);
                     if (realSend) {
-                     //   Transport.send(message);
+                        Transport.send(message);
                         statusString.append("\nemail sent -> " + resultString.get(2));
-                        if (useWithDB) new DatabaseHandler().updateRow(resultString.get(1),resultString.get(2));
+                        if (useWithDB) new DatabaseHandler().updateRow(resultString.get(1), resultString.get(2));
                         count++;
                     }
                 } catch (MessagingException ex) {
