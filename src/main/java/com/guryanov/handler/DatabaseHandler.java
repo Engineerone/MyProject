@@ -33,7 +33,7 @@ public class DatabaseHandler extends ConfigSetting {
                         PreparedStatement prSt = connection.prepareStatement(queryString);
                         prSt.setString(1, resultString.get(0));
                         prSt.setString(2, resultString.get(1));
-                        prSt.setString(3, "");
+                        prSt.setString(3, resultString.get(2));
                         prSt.executeUpdate();
                         statusString.append("\n" + count + " line written -> " + resultString.get(0) + " " + resultString.get(1));
 

@@ -12,8 +12,7 @@ public class MessageHandler implements UserMessage {
                 null,
                 ex.getMessage(),
                 "Error", JOptionPane.ERROR_MESSAGE);
-     //   statusString.setText("");
-        statusString.append("\n"+ex.getMessage());
+        statusString.append("\n" + ex.getMessage());
     }
 
     void infoMessage(String message) {
@@ -21,8 +20,14 @@ public class MessageHandler implements UserMessage {
                 null,
                 message,
                 "Info", JOptionPane.INFORMATION_MESSAGE);
-        //statusString.setText("");
-        statusString.append("\n"+message);
+        statusString.append("\n" + message);
+    }
+
+    void aboutMessage(String message) {
+        JOptionPane.showMessageDialog(
+                null,
+                message,
+                "Project-SPAMMER", JOptionPane.PLAIN_MESSAGE);
     }
 
     @Override
@@ -33,5 +38,10 @@ public class MessageHandler implements UserMessage {
     @Override
     public void info(String message) {
         infoMessage(message);
+    }
+
+    @Override
+    public void about(String message) {
+        aboutMessage(message);
     }
 }

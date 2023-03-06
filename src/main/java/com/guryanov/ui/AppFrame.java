@@ -15,6 +15,7 @@ import static com.guryanov.config.ConfigSetting.*;
 
 public class AppFrame extends JFrame {
 
+    public static final float version = (float) 1.2;
     public static boolean saveStop = false;
     public static boolean sendEmailStop = false;
     public static FileAction fileAction = new FileHandler();
@@ -50,9 +51,11 @@ public class AppFrame extends JFrame {
     JMenu toolMenu = new JMenu();
     public static JMenuItem createDB = new JMenuItem();
     public static JMenuItem deleteDB = new JMenuItem();
+    public static JMenuItem about = new JMenuItem();
     JMenuItem prepareFile = new JMenuItem();
     JMenuItem setting = new JMenuItem();
     JMenu fileMenu = new JMenu();
+    JMenu aboutMenu = new JMenu();
     JMenuItem fileOpenMenu = new JMenuItem();
     JMenuItem fileExitMenu = new JMenuItem();
     public static JFileChooser fileChooser = new JFileChooser();
@@ -66,6 +69,7 @@ public class AppFrame extends JFrame {
         setJMenuBar(menu);
         menu.add(createFileMenu());
         menu.add(createToolMenu());
+        menu.add(createAboutMenu());
         appWindow.add(createLeftSidePanel());
         appWindow.add(createCentralPanel());
         appWindow.add(createRightSidePanel());
@@ -232,6 +236,14 @@ public class AppFrame extends JFrame {
         return toolMenu;
     }
 
+    private JMenu createAboutMenu() {
+        aboutMenu.setText("Help");
+        about.setText("About");
+        aboutMenu.add(about);
+        about.addActionListener(e -> AboutMenu.about());
+        return aboutMenu;
+    }
+
     private JPanel createLeftSidePanel() {
         areaFileContain.setEditable(false);
         areaFileContain.setText("File format:\nname< tab >email\n\nExample:\nname\temail@domain.com");
@@ -278,7 +290,7 @@ public class AppFrame extends JFrame {
     private JPanel createRightSidePanel() {
 
         buttonSendEmail.setText("Send e-mail");
-        buttonSendEmailStop.setText("Stop send");
+        buttonSendEmailStop.setText("Send stop");
         fieldEmailSubject.setText("Introduce my PROJECT SPAMMER");
         areaEmailMessage.setText("Hello <name>");
         rightSidePanelSouthButton.add(buttonSendEmail);

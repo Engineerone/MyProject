@@ -64,7 +64,8 @@ public class Query implements SQLQuery {
                         + db_table_columnName + ","
                         + db_table_columnEmail + ","
                         + db_table_columnSend + ")" +
-                        "VALUES(?,?,?)";
+                        "VALUES(?,?,?)"+
+                        "ON CONFLICT DO NOTHING";
                 break;
             }
         }
