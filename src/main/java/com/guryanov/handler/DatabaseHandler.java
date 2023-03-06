@@ -1,5 +1,7 @@
 package com.guryanov.handler;
 
+import com.guryanov.button.Query;
+import com.guryanov.interf.SQLQuery;
 import com.guryanov.config.DBType;
 import com.guryanov.config.ConfigSetting;
 
@@ -10,92 +12,69 @@ import java.util.List;
 import static com.guryanov.ui.AppFrame.*;
 
 public class DatabaseHandler extends ConfigSetting {
-    private String sqlQuery = "";
+    private String connectionString;
+    private String queryString;
+    private SQLQuery sqlQuery = new Query();
 
-    public Connection getDbConnection() throws SQLException {
-        String connectionString = null;
-        if (db_type == DBType.MySQL)
-            connectionString = "jdbc:mysql://" + db_host + ":" + db_port + "/" + db_schema;
-        else if (db_type == DBType.PostgreSQL)
-            connectionString = "jdbc:postgresql://" + db_host + ":" + db_port + "/" + db_schema;
+    public Connection getDBConnection() throws SQLException {
+        connectionString = sqlQuery.getConnection((DBType) db_type, db_schema);
         Connection dbConnection = DriverManager.getConnection(connectionString, db_user, db_secr);
         return dbConnection;
     }
 
-    public void insertRow(List<List<String>> result) throws SQLException {
-        try (Connection connection = getDbConnection()) {
+    public int insertRow(List<List<String>> result) throws SQLException {
+        int count = 0;
+        try (Connection connection = getDBConnection()) {
             for (List<String> resultString : result) {
                 try {
-                    sqlQuery =
-                            "INSERT INTO "
-                                    + db_table_name + "("
-                                    + db_table_columnName + ","
-                                    + db_table_columnEmail + ","
-                                    + db_table_columnSend + ")" +
-                                    "VALUES(?,?,?)";
-                    PreparedStatement prSt = connection.prepareStatement(sqlQuery);
+                    queryString = sqlQuery.getInsert((DBType) db_type);
+                    PreparedStatement prSt = connection.prepareStatement(queryString);
                     prSt.setString(1, resultString.get(0));
                     prSt.setString(2, resultString.get(1));
                     prSt.setString(3, "");
                     prSt.executeUpdate();
-                    statusString.append("\n" + "Line written " + resultString.get(0) + " " + resultString.get(1));
+                    //statusString.append("\n" + "Line written " + resultString.get(0) + " " + resultString.get(1));
+                    count++;
                 } catch (SQLIntegrityConstraintViolationException e) {
-                    statusString.append("\n" + "Email exists SKIP: " + resultString.get(0) + " " + resultString.get(1));
+                    statusString.append("\n" + "Email exists in DB: " + resultString.get(0) + " " + resultString.get(1));
                 }
 
             }
         }
+        return count;
     }
 
-    public void updatetRow(List<List<String>> result) throws SQLException {
-        try (Connection connection = getDbConnection()) {
+    public void updateRow(List<List<String>> result) throws SQLException {
+        try (Connection connection = getDBConnection()) {
             for (List<String> resultString : result) {
                 try {
-                    sqlQuery =
-                            "UPDATE "
-                                    + db_table_name
-                                    + " SET "
-                                    + db_table_columnSend + "=?"
-                                    + "WHERE "
-                                    + db_table_columnName + "=?"
-                                    + "AND "
-                                    + db_table_columnEmail + "=?";
-
-                    PreparedStatement prSt = connection.prepareStatement(sqlQuery);
+                    queryString = sqlQuery.getUpdate((DBType) db_type);
+                    PreparedStatement prSt = connection.prepareStatement(queryString);
                     prSt.setString(1, "send");
                     prSt.setString(2, resultString.get(1));
                     prSt.setString(3, resultString.get(2));
                     prSt.executeUpdate();
-//                    ResultSet resultSet = prSt.getResultSet();
-//                    if (resultSet == null)
-//                        statusString.append("\nRow not found in database, SEND not save in DB: " + resultString.get(1) + " " + resultString.get(2));
                 } catch (
                         SQLIntegrityConstraintViolationException e) {
                     statusString.append("\n" + e.getMessage());
                 }
-
             }
         }
     }
 
     public void eraseDB() throws SQLException {
-        sqlQuery =
-                "DELETE FROM "
-                        + db_table_name;
-        try (PreparedStatement prSt = getDbConnection()
-                .prepareStatement(sqlQuery)) {
+        try (Connection connection = getDBConnection()) {
+            queryString = sqlQuery.getErase((DBType) db_type);
+            PreparedStatement prSt = connection.prepareStatement(queryString);
             prSt.executeUpdate();
         }
     }
 
-    public List LoadFromDB() throws SQLException {
-        List<String[]> result = new ArrayList<>();
-        sqlQuery =
-                "SELECT * FROM "
-                        + db_table_name
-                        + " ORDER BY id";
-        try (PreparedStatement prSt = getDbConnection()
-                .prepareStatement(sqlQuery)) {
+    public List loadDB() throws SQLException {
+        try (Connection connection = getDBConnection()) {
+            List<String[]> result = new ArrayList<>();
+            queryString = sqlQuery.getLoadFromDB((DBType) db_type);
+            PreparedStatement prSt = connection.prepareStatement(queryString);
             prSt.execute();
             ResultSet resultSet = prSt.getResultSet();
             while (resultSet.next()) {
@@ -111,23 +90,15 @@ public class DatabaseHandler extends ConfigSetting {
     }
 
     public void createDB() throws SQLException {
-        String connectionString = "jdbc:mysql://" + db_host + ":" + db_port + "/";
-        sqlQuery = "CREATE DATABASE " + db_schema;
+        connectionString = sqlQuery.getConnection((DBType) db_type);
+        queryString = sqlQuery.getCreateDB((DBType) db_type);
         try (PreparedStatement prSt = DriverManager.getConnection(connectionString, db_user, db_secr)
-                .prepareStatement(sqlQuery)) {
+                .prepareStatement(queryString)) {
             prSt.execute();
         }
-        sqlQuery =
-                "CREATE TABLE "
-                        + db_table_name + "(" +
-                        "id int NOT NULL AUTO_INCREMENT," +
-                        "name varchar(100) NOT NULL ," +
-                        "email varchar(100) NOT NULL UNIQUE ," +
-                        "send varchar(45) NOT NULL ," +
-                        "PRIMARY KEY (`id`)" +
-                        ")";
-        try (PreparedStatement prSt = getDbConnection()
-                .prepareStatement(sqlQuery)) {
+        queryString = sqlQuery.getTableDB((DBType) db_type);
+        try (PreparedStatement prSt = getDBConnection()
+                .prepareStatement(queryString)) {
             {
                 prSt.execute();
             }
@@ -135,12 +106,35 @@ public class DatabaseHandler extends ConfigSetting {
     }
 
     public void dropDB() throws SQLException {
-        sqlQuery =
-                "DROP DATABASE "
-                        + db_schema;
-        try (PreparedStatement prSt = getDbConnection()
-                .prepareStatement(sqlQuery)) {
+        queryString = sqlQuery.getDropDB((DBType) db_type);
+        if (db_type == DBType.MySQL) {
+            connectionString = sqlQuery.getConnection((DBType) db_type, db_schema);
+        } else if (db_type == DBType.PostgreSQL) {
+            connectionString = sqlQuery.getConnection((DBType) db_type, "root");
+        }
+
+        try (
+                PreparedStatement prSt = DriverManager.getConnection(connectionString, db_user, db_secr)
+                        .prepareStatement(queryString)) {
             prSt.execute();
         }
+
+    }
+
+    public List<String> versionDB(String[] connectionData) throws SQLException {
+        connectionString = sqlQuery.getConnection(connectionData[0], connectionData[1], DBType.valueOf(connectionData[4]));
+        List<String> result = new ArrayList<>();
+        queryString = sqlQuery.getVersionDB(DBType.valueOf(connectionData[4]));
+        try (PreparedStatement prSt = DriverManager.getConnection(connectionString, connectionData[2], connectionData[3])
+                .prepareStatement(queryString)) {
+            prSt.execute();
+            ResultSet resultSet = prSt.getResultSet();
+            while (resultSet.next()) {
+                result.add("Connection successful !");
+                result.add(resultSet.getString(1));
+            }
+        }
+        return result;
     }
 }
+

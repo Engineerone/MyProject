@@ -7,12 +7,12 @@ import java.sql.SQLException;
 import static com.guryanov.ui.AppFrame.userMessage;
 
 public class CreateDB {
-    public CreateDB() {
+    public static void create() {
         try {
             new DatabaseHandler().createDB();
-            userMessage.InfoMessage("Create DB completed");
+            userMessage.info("Create DB completed");
         } catch (SQLException ex) {
-            userMessage.ErrorExeption(ex);
+            userMessage.error(ex);
         }
     }
 }

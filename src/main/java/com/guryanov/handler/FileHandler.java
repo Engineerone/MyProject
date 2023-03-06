@@ -8,7 +8,7 @@ import static com.guryanov.ui.AppFrame.*;
 
 public class FileHandler implements FileAction {
     @Override
-    public StringBuffer Load(File file) {
+    public StringBuffer load(File file) {
         StringBuffer fileContain = new StringBuffer();
         try (FileReader reader = new FileReader(file)) {
             while (reader.ready()) {
@@ -16,20 +16,20 @@ public class FileHandler implements FileAction {
                 fileContain.append(ch);
             }
         } catch (IOException ex) {
-            userMessage.ErrorExeption(ex);
+            userMessage.error(ex);
         }
         return fileContain;
     }
 
     @Override
-    public void Save(StringBuffer stringBuffer, String fileName, String currentDirectory) {
+    public void save(StringBuffer stringBuffer, String fileName, String fileCurrentDirectory) {
         fileName = fileName.substring(0, fileName.indexOf('.'));
-        String outputFilePath = currentDirectory + "\\" + fileName + "-out.txt";
+        String outputFilePath = fileCurrentDirectory + "\\" + fileName + "-out.txt";
         try (FileWriter fileWriter = new FileWriter((outputFilePath))) {
             fileWriter.write(String.valueOf(stringBuffer));
-            userMessage.InfoMessage("Save completed " + outputFilePath);
+            userMessage.info("\nSave file completed -> " + outputFilePath);
         } catch (IOException ex) {
-            userMessage.ErrorExeption(ex);
+            userMessage.error(ex);
         }
     }
 }

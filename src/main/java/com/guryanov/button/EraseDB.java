@@ -7,13 +7,13 @@ import java.sql.SQLException;
 import static com.guryanov.ui.AppFrame.*;
 
 public class EraseDB {
-    public EraseDB() {
+public static void erase() {
         try {
             new DatabaseHandler().eraseDB();
-            statusString.setText("");
-            statusString.append("Erase completed");
+          //  statusString.setText("");
+            statusString.append("\nErase completed");
         } catch (SQLException ex) {
-            userMessage.ErrorExeption(ex);
+            userMessage.error(ex);
         }
     }
 }

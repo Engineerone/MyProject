@@ -6,17 +6,14 @@ import javax.swing.*;
 
 import static com.guryanov.ui.AppFrame.statusString;
 
-
 public class MessageHandler implements UserMessage {
-
-
-    void ErrorMessage(Exception ex) {
+    void errorMessage(Exception ex) {
         JOptionPane.showMessageDialog(
                 null,
                 ex.getMessage(),
                 "Error", JOptionPane.ERROR_MESSAGE);
-        statusString.setText("");
-        statusString.append(ex.getMessage());
+     //   statusString.setText("");
+        statusString.append("\n"+ex.getMessage());
     }
 
     void infoMessage(String message) {
@@ -24,17 +21,17 @@ public class MessageHandler implements UserMessage {
                 null,
                 message,
                 "Info", JOptionPane.INFORMATION_MESSAGE);
-        statusString.setText("");
-        statusString.append(message);
+        //statusString.setText("");
+        statusString.append("\n"+message);
     }
 
     @Override
-    public void ErrorExeption(Exception ex) {
-        ErrorMessage(ex);
+    public void error(Exception ex) {
+        errorMessage(ex);
     }
 
     @Override
-    public void InfoMessage(String message) {
+    public void info(String message) {
         infoMessage(message);
     }
 }

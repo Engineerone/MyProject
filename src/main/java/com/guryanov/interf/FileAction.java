@@ -3,7 +3,7 @@ package com.guryanov.interf;
 import java.io.File;
 
 public interface FileAction {
-    StringBuffer Load(File file);
+    StringBuffer load(File file);
 
-    void Save(StringBuffer stringBuffer, String fileName, String currentDirectory);
+    void save(StringBuffer stringBuffer, String fileName, String currentDirectory);
 }

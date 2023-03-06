@@ -29,7 +29,8 @@ public class EmailHandler extends ConfigSetting {
         session = Session.getDefaultInstance(properties, auth);
     }
 
-    public void sendMessage(List<List<String>> result) {
+    public int sendMessage(List<List<String>> result) {
+        int count = 0;
         for (List<String> resultString : result) {
             try {
                 Message message;
@@ -47,20 +48,23 @@ public class EmailHandler extends ConfigSetting {
                 if (realSend) {
                     Transport.send(message);
                 }
+                count++;
+              //  statusString.append("\nEmail sent -> " + resultString.get(2));
             } catch (MessagingException ex) {
-                userMessage.ErrorExeption(ex);
+                statusString.append("\n" + ex.getMessage());
             }
             tableModel.setValueAt("send", Integer.valueOf(resultString.get(0)), 3);
         }
 
         if (useWithDB) {
             try {
-                new DatabaseHandler().updatetRow(result);
+                new DatabaseHandler().updateRow(result);
             } catch (SQLException ex) {
-                userMessage.ErrorExeption(ex);
+                userMessage.error(ex);
             }
         }
 
         dbTable.scrollRectToVisible(dbTable.getCellRect(result.size() - 15, 3, true));
+        return count;
     }
 }

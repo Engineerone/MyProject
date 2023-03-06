@@ -4,21 +4,28 @@ import static com.guryanov.ui.AppFrame.*;
 
 import com.guryanov.handler.*;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class SendEmail implements Runnable {
-    public SendEmail() {
-    }
+
+    static Timestamp timestamp;
 
     @Override
     public void run() {
+        int count;
+        timestamp = new Timestamp(System.currentTimeMillis());
+        statusString.append("\nSend start -> " + timestamp);
         String name, email, emalSubject, emailText;
         EmailHandler mymail = new EmailHandler();
         List<List<String>> result = new ArrayList<>();
         for (int i = 0; i < tableModel.getRowCount(); i++) {
-            if (tableModel.getValueAt(i, 3).toString().equals("send")) continue;
+            if (tableModel.getValueAt(i, 3).toString().equals("send")) {
+                statusString.append("\nEmail already sent -> " + tableModel.getValueAt(i, 2));
+                continue;
+            }
             List<String> resultString;
             name = tableModel.getValueAt(i, 1).toString();
             email = tableModel.getValueAt(i, 2).toString();
@@ -27,6 +34,9 @@ public class SendEmail implements Runnable {
             resultString = Arrays.asList(String.valueOf(i), name, email, emalSubject, emailText);
             result.add(resultString);
         }
-        mymail.sendMessage(result);
+        count = mymail.sendMessage(result);
+        statusString.append("\nSend completed (" + count + " email)");
+        timestamp = new Timestamp(System.currentTimeMillis());
+        statusString.append("\nSend end -> " + timestamp);
     }
 }

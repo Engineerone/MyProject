@@ -5,7 +5,7 @@ import com.guryanov.ui.AppFrame;
 import static com.guryanov.config.ConfigSetting.*;
 
 public class ChangeButtonVisible {
-    public ChangeButtonVisible() {
+    public static void change() {
         if (!useWithDB) {
             AppFrame.buttonSaveToDB.setEnabled(false);
             AppFrame.buttonLoadFromDB.setEnabled(false);

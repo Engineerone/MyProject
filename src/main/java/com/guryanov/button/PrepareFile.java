@@ -1,16 +1,17 @@
 package com.guryanov.button;
 
+import com.guryanov.handler.FileCheck;
 import com.guryanov.ui.AppFrame;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
-
 import java.io.File;
 
 import static com.guryanov.ui.AppFrame.*;
 
 public class PrepareFile {
-    public PrepareFile(AppFrame frame) {
+
+    public static void getFile(AppFrame frame) {
         fileChooser.setDialogTitle("Directory selection");
         FileNameExtensionFilter filter = new FileNameExtensionFilter("*.txt", "txt");
         fileChooser.setFileFilter(filter);
@@ -20,8 +21,8 @@ public class PrepareFile {
             File file = fileChooser.getSelectedFile();
             String fileName = fileChooser.getSelectedFile().getName();
             String fileCurrentDirectory = fileChooser.getCurrentDirectory().getAbsolutePath();
-            StringBuffer stringBuffer = fileAction.Load((file));
-            fileAction.Save(stringBuffer, fileName, fileCurrentDirectory);
+            StringBuffer stringBuffer = fileAction.load((file));
+            fileAction.save(FileCheck.checkFileAddName(stringBuffer), fileName, fileCurrentDirectory);
         }
     }
 }

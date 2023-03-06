@@ -19,7 +19,6 @@ public class AppFrame extends JFrame {
     public static UserMessage userMessage = new MessageHandler();
     public static JTextArea areaFileContain = new JTextArea("", 35, 30);
     public static JTextArea statusString = new JTextArea(5, 41);
-
     public static String[] column_names = {"#", "name", "email", "send"};
     public static DefaultTableModel tableModel = new DefaultTableModel(column_names, 0) {
         @Override
@@ -90,8 +89,8 @@ public class AppFrame extends JFrame {
         fileMenu.add(fileOpenMenu);
         fileMenu.addSeparator();
         fileMenu.add(fileExitMenu);
-        fileOpenMenu.addActionListener(e -> new FileMenu(AppFrame.this));
-        fileExitMenu.addActionListener(e -> new ExitMenu());
+        fileOpenMenu.addActionListener(e -> new FileMenu().openFile(AppFrame.this));
+        fileExitMenu.addActionListener(e -> new ExitMenu().exit());
         return fileMenu;
     }
 
@@ -107,15 +106,15 @@ public class AppFrame extends JFrame {
         toolMenu.add(prepareFile);
         toolMenu.addSeparator();
         toolMenu.add(setting);
-        createDB.addActionListener(e -> new CreateDB());
-        deleteDB.addActionListener(e -> new DeleteDB());
-        prepareFile.addActionListener(e -> new PrepareFile(AppFrame.this));
+        createDB.addActionListener(e -> CreateDB.create());
+        deleteDB.addActionListener(e -> DeleteDB.delete());
+        prepareFile.addActionListener(e -> PrepareFile.getFile(AppFrame.this));
         setting.addActionListener((ButtonHandler) e -> {
             JFrame frame = new JFrame();
-            frame.setBounds(550, 300, 300, 500);
+            frame.setBounds(550, 300, 300, 520);
             frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             JPanel panel = new JPanel(new BorderLayout());
-            JPanel panelNorth = new JPanel(new GridLayout(16, 1));
+            JPanel panelNorth = new JPanel(new GridLayout(17, 1));
             JPanel panelSouth = new JPanel();
 
             panelNorth.add(new JLabel("DB type"));
@@ -156,6 +155,10 @@ public class AppFrame extends JFrame {
             JTextField field_db_table_columnEmail = new JTextField(db_table_columnEmail);
             panelNorth.add(field_db_table_columnEmail);
 
+            panelNorth.add(new JLabel("DB table 'ColumnSend'"));
+            JTextField field_db_table_columnSend = new JTextField(db_table_columnSend);
+            panelNorth.add(field_db_table_columnSend);
+
             panelNorth.add(new JLabel("Email SMTP server"));
             JTextField field_email_smtp_server = new JTextField(email_smtp_server);
             panelNorth.add(field_email_smtp_server);
@@ -187,7 +190,9 @@ public class AppFrame extends JFrame {
             panelNorth.add(checkBox_useWithDB);
 
             JButton buttonSave = new JButton("Save");
+            JButton buttonVersionCheck = new JButton("DB connection test");
             panelSouth.add(buttonSave);
+            panelSouth.add(buttonVersionCheck);
 
             panel.add(panelNorth, BorderLayout.NORTH);
             panel.add(panelSouth, BorderLayout.SOUTH);
@@ -211,9 +216,15 @@ public class AppFrame extends JFrame {
                 email_fieldFrom = field_email_fieldFrom.getText().trim();
                 realSend = checkBox_realSend.isSelected();
                 useWithDB = checkBox_useWithDB.isSelected();
-                new ChangeButtonVisible();
+                ChangeButtonVisible.change();
                 frame.dispose();
             });
+            buttonVersionCheck.addActionListener(e1 -> VersionDB.Test(
+                    field_db_host.getText(),
+                    field_db_port.getText(),
+                    field_db_user.getText(),
+                    field_db_secr.getText(),
+                    field_dbtype.getSelectedItem().toString()));
         });
         return toolMenu;
     }
@@ -233,8 +244,8 @@ public class AppFrame extends JFrame {
         buttonSaveToDB.setText("Add to DB");
         buttonLoadFromDB.setText("Load from DB");
         buttonEraseDB.setText("Erase DB");
-        new ChangeButtonVisible();
-        statusString.setText("Status string");
+        ChangeButtonVisible.change();
+        //statusString.setText("Status string");
         statusString.setEditable(false);
         centralPanelNorth.add(buttonLoadIntoTable);
         centralPanelNorth.add(buttonSaveToDB);
@@ -242,7 +253,6 @@ public class AppFrame extends JFrame {
         centralPanelNorth.add(buttonEraseDB);
         setJTableColumnsWidth(dbTable, 450, 10, 40, 40, 10);
         centralPanelCenter.add(new JScrollPane(dbTable));
-
         statusString.setCaretPosition(statusString.getDocument().getLength());
         JScrollPane scrollStatus = new JScrollPane(statusString);
         scrollStatus.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -252,10 +262,10 @@ public class AppFrame extends JFrame {
         centralPanel.add(centralPanelNorth, BorderLayout.NORTH);
         centralPanel.add(centralPanelCenter, BorderLayout.CENTER);
         centralPanel.add(centralPanelSouth, BorderLayout.SOUTH);
-        buttonLoadIntoTable.addActionListener(e->new LoadIntoTable());
-        buttonSaveToDB.addActionListener(e -> new SaveToDB());
-        buttonEraseDB.addActionListener(e -> new EraseDB());
-        buttonLoadFromDB.addActionListener(e -> new LoadFromDB());
+        buttonLoadIntoTable.addActionListener(e -> LoadIntoTable.load());
+        buttonSaveToDB.addActionListener(e -> SaveToDB.save());
+        buttonEraseDB.addActionListener(e -> EraseDB.erase());
+        buttonLoadFromDB.addActionListener(e -> LoadFromDB.load());
         return centralPanel;
     }
 
@@ -263,7 +273,7 @@ public class AppFrame extends JFrame {
 
         buttonSendEmail.setText("Send e-mail");
         buttonSendEmailStop.setText("Stop send");
-        fieldEmailSubject.setText("Introduce my first JAVA project - SPAMMER");
+        fieldEmailSubject.setText("Introduce my PROJECT SPAMMER");
         areaEmailMessage.setText("Hello <name>");
         rightSidePanelSouthButton.add(buttonSendEmail);
         rightSidePanelSouthButton.add(buttonSendEmailStop);
@@ -272,20 +282,8 @@ public class AppFrame extends JFrame {
         rightSidePanelSouth.add(rightSidePanelSouthButton);
         rightSidePanel.add(rightSidePanelNorth, BorderLayout.NORTH);
         rightSidePanel.add(rightSidePanelSouth, BorderLayout.SOUTH);
-        buttonSendEmail.addActionListener(e -> {
-            SendEmail sendEmail = new SendEmail();
-            Thread thread = new Thread(sendEmail, "Send thread");
-            thread.start();
-            statusString.append("\n" + "Thread id " + thread.getId());
-        });
-        buttonSendEmailStop.addActionListener(e -> {
-            for (Thread t : Thread.getAllStackTraces().keySet()) {
-                if (t.getName().equals("Send thread")) {
-                    t.stop();
-                    statusString.append("\n" + t.isAlive());
-                }
-            }
-        });
+        buttonSendEmail.addActionListener(e -> EmailSendStart.start());
+        buttonSendEmailStop.addActionListener(e -> EmailSendStop.stop());
         return rightSidePanel;
     }
 }

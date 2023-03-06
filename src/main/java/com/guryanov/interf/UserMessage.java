@@ -1,6 +1,6 @@
 package com.guryanov.interf;
 
 public interface UserMessage {
-    void ErrorExeption(Exception ex);
-    void InfoMessage(String message);
+    void error(Exception ex);
+    void info(String message);
 }

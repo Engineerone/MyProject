@@ -6,17 +6,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class EmailCheck {
-    boolean emailConfirmed;
-    private String name;
-    private String email;
-
-    EmailCheck(String name, String email) {
-        this.name = name;
-        this.email = email;
-        emailConfirmed = Check();
-    }
-
-    boolean Check() {
+    public static boolean check(String email) {
         boolean emailCheckOne;
         boolean emailCheckTwo;
         Pattern VALID_EMAIL_ADDRESS_REGEX =
@@ -33,7 +23,6 @@ public class EmailCheck {
         } catch (AddressException ex) {
             emailCheckTwo = false;
         }
-
         return emailCheckOne & emailCheckTwo;
     }
 }

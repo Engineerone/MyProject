@@ -7,13 +7,12 @@ import java.sql.SQLException;
 import static com.guryanov.ui.AppFrame.*;
 
 public class DeleteDB {
-    public DeleteDB() {
+    public static void delete() {
         try {
             new DatabaseHandler().dropDB();
-            userMessage.InfoMessage("DB deleted");
+            userMessage.info("DB deleted");
         } catch (SQLException ex) {
-            userMessage.ErrorExeption(ex);
-
+            userMessage.error(ex);
         }
     }
 }

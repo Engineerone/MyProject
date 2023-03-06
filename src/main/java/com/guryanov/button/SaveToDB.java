@@ -8,14 +8,15 @@ import java.util.*;
 
 import static com.guryanov.ui.AppFrame.*;
 
-
 public class SaveToDB {
-    public SaveToDB() {
+
+    public static void save() {
         List<List<String>> result = new ArrayList<>();
         String name, email;
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-        statusString.setText("");
-        statusString.append("Save start: " + timestamp);
+        int count;
+        // statusString.setText("");
+        statusString.append("\nSave start -> " + timestamp);
         if (tableModel.getRowCount() > 0) {
             try {
                 for (int i = 0; i < tableModel.getRowCount(); i++) {
@@ -25,16 +26,16 @@ public class SaveToDB {
                     resultString = Arrays.asList(name, email);
                     result.add(resultString);
                 }
-                new DatabaseHandler().insertRow(result);
-                statusString.append("\nSave completed");
+                count = new DatabaseHandler().insertRow(result);
+                statusString.append("\nSave completed (" + count + " rows)");
             } catch (SQLException ex) {
-                userMessage.ErrorExeption(ex);
+                userMessage.error(ex);
             }
             timestamp = new Timestamp(System.currentTimeMillis());
-            statusString.append("\n" + "Save end: " + timestamp);
+            statusString.append("\nSave end -> " + timestamp);
         } else {
-            statusString.setText("");
-            statusString.append("List empty");
+            //  statusString.setText("");
+            statusString.append("\nList empty");
         }
     }
 }
