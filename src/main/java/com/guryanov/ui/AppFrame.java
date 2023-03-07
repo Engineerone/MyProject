@@ -23,12 +23,13 @@ public class AppFrame extends JFrame {
     public static JTextArea areaFileContain = new JTextArea("", 35, 30);
     public static JTextArea statusString = new JTextArea(5, 41);
     public static String[] column_names = {"#", "name", "email", "send"};
-    public static DefaultTableModel tableModel = new DefaultTableModel(column_names, 0) {
-        @Override
-        public boolean isCellEditable(int row, int column) {
-            return false;
-        }
-    };
+    public static DefaultTableModel tableModel = new DefaultTableModel(column_names, 0);
+//    {
+//        @Override
+//        public boolean isCellEditable(int row, int column) {
+//            return false;
+//        }
+//    };
     public static JTable dbTable = new JTable(tableModel);
     public static JTextArea areaEmailMessage = new JTextArea("", 32, 30);
     public static JTextField fieldEmailSubject = new JTextField();
@@ -261,7 +262,6 @@ public class AppFrame extends JFrame {
         buttonLoadFromDB.setText("Load DB");
         buttonEraseDB.setText("Erase DB");
         ChangeButtonVisible.change();
-        //statusString.setText("Status string");
         statusString.setEditable(false);
         centralPanelNorth.add(buttonLoadIntoTable);
         centralPanelNorth.add(buttonSaveToDB);
