@@ -12,7 +12,7 @@ public class SaveToDB implements Runnable {
     @Override
     public void run() {
         List<List<String>> result = new ArrayList<>();
-        String name, email,send;
+        String name, email, send;
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         int count;
         statusString.append("\nsave start -> " + timestamp);
@@ -22,8 +22,8 @@ public class SaveToDB implements Runnable {
                     List<String> resultString;
                     name = tableModel.getValueAt(i, 1).toString();
                     email = tableModel.getValueAt(i, 2).toString();
-                    send = tableModel.getValueAt(i,3).toString();
-                    resultString = Arrays.asList(name, email,send);
+                    send = tableModel.getValueAt(i, 3).toString();
+                    resultString = Arrays.asList(name, email, send);
                     result.add(resultString);
                 }
                 count = new DatabaseHandler().insertRow(result);

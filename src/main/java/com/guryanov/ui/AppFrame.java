@@ -10,6 +10,7 @@ import com.guryanov.interf.UserMessage;
 import javax.swing.*;
 import javax.swing.table.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 
 import static com.guryanov.config.ConfigSetting.*;
 
@@ -24,7 +25,7 @@ public class AppFrame extends JFrame {
     public static JTextArea statusString = new JTextArea(5, 41);
     public static String[] column_names = {"#", "name", "email", "send"};
     public static DefaultTableModel tableModel = new DefaultTableModel(column_names, 0);
-//    {
+    //    {
 //        @Override
 //        public boolean isCellEditable(int row, int column) {
 //            return false;
@@ -180,7 +181,7 @@ public class AppFrame extends JFrame {
             panelNorth.add(field_email_smtp_user);
 
             panelNorth.add(new JLabel("Email SMTP password"));
-            JTextField field_email_smtp_secr = new JTextField(email_smtp_secr);
+            JPasswordField field_email_smtp_secr = new JPasswordField(email_smtp_secr);
             panelNorth.add(field_email_smtp_secr);
 
             panelNorth.add(new JLabel("Email field From"));
