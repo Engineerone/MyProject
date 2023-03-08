@@ -25,7 +25,6 @@ public class DatabaseHandler extends ConfigSetting {
     public int insertRow(List<List<String>> result) throws SQLException {
         int count = 0;
         try (Connection connection = getDBConnection()) {
-
             for (List<String> resultString : result) {
                 if (!saveStop) {
                     try {
@@ -36,7 +35,6 @@ public class DatabaseHandler extends ConfigSetting {
                         prSt.setString(3, resultString.get(2));
                         prSt.executeUpdate();
                         statusString.append("\n" + count + " line written -> " + resultString.get(0) + " " + resultString.get(1));
-
                         count++;
                     } catch (SQLIntegrityConstraintViolationException e) {
                         statusString.append("\n" + "email exists in DB -> " + resultString.get(0) + " " + resultString.get(1));
@@ -129,8 +127,8 @@ public class DatabaseHandler extends ConfigSetting {
         connectionString = sqlQuery.getConnection(connectionData[0], connectionData[1], DBType.valueOf(connectionData[4]));
         List<String> result = new ArrayList<>();
         queryString = sqlQuery.getVersionDB(DBType.valueOf(connectionData[4]));
-        try (PreparedStatement prSt = DriverManager.getConnection(connectionString, connectionData[2], connectionData[3])
-                .prepareStatement(queryString)) {
+        try (Connection connection = DriverManager.getConnection(connectionString, connectionData[2], connectionData[3])) {
+            PreparedStatement prSt = connection.prepareStatement(queryString);
             prSt.execute();
             ResultSet resultSet = prSt.getResultSet();
             while (resultSet.next()) {

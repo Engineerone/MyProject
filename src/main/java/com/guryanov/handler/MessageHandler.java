@@ -15,6 +15,14 @@ public class MessageHandler implements UserMessage {
         statusString.append("\n" + ex.getMessage());
     }
 
+    void errorMessage(String message) {
+        JOptionPane.showMessageDialog(
+                null,
+                message,
+                "Error", JOptionPane.ERROR_MESSAGE);
+        statusString.append("\n" + message);
+    }
+
     void infoMessage(String message) {
         JOptionPane.showMessageDialog(
                 null,
@@ -33,6 +41,11 @@ public class MessageHandler implements UserMessage {
     @Override
     public void error(Exception ex) {
         errorMessage(ex);
+    }
+
+    @Override
+    public void error(String message) {
+        errorMessage(message);
     }
 
     @Override

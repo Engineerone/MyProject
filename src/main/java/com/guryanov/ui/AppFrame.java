@@ -10,7 +10,6 @@ import com.guryanov.interf.UserMessage;
 import javax.swing.*;
 import javax.swing.table.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 
 import static com.guryanov.config.ConfigSetting.*;
 
@@ -125,7 +124,7 @@ public class AppFrame extends JFrame {
             JPanel panel = new JPanel(new BorderLayout());
             JPanel panelNorth = new JPanel(new GridLayout(17, 1));
             JPanel panelSouth = new JPanel();
-
+            new LoadDriver();
             panelNorth.add(new JLabel("DB type"));
             Enum[] dbtype = {DBType.MySQL, DBType.PostgreSQL};
             JComboBox field_dbtype = new JComboBox(dbtype);
@@ -145,7 +144,7 @@ public class AppFrame extends JFrame {
             panelNorth.add(field_db_user);
 
             panelNorth.add(new JLabel("DB password"));
-            JTextField field_db_secr = new JTextField(db_secr);
+            JPasswordField field_db_secr = new JPasswordField(db_secr);
             panelNorth.add(field_db_secr);
 
             panelNorth.add(new JLabel("DB name"));
@@ -207,6 +206,9 @@ public class AppFrame extends JFrame {
             panel.add(panelSouth, BorderLayout.SOUTH);
             frame.add(panel);
             frame.setVisible(true);
+
+            field_db_port.setInputVerifier(new PortFormatVerifier());
+            field_email_smtp_port.setInputVerifier(new PortFormatVerifier());
 
             buttonSave.addActionListener(e1 -> {
                 db_type = (DBType) field_dbtype.getSelectedItem();
@@ -306,3 +308,4 @@ public class AppFrame extends JFrame {
         return rightSidePanel;
     }
 }
+
