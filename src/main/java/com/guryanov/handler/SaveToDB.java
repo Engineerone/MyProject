@@ -1,6 +1,5 @@
-package com.guryanov.button;
+package com.guryanov.handler;
 
-import com.guryanov.handler.DatabaseHandler;
 
 import java.sql.Timestamp;
 import java.sql.SQLException;

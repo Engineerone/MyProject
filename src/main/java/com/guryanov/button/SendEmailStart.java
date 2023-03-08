@@ -1,12 +1,11 @@
-package com.guryanov.handler;
+package com.guryanov.button;
 
-import com.guryanov.button.SendEmail;
+import com.guryanov.handler.SendEmail;
 
 import static com.guryanov.ui.AppFrame.statusString;
 import static com.guryanov.ui.AppFrame.userMessage;
 
 public class SendEmailStart {
-
     public static void start() {
         boolean threatSaveStart = false;
         for (Thread t : Thread.getAllStackTraces().keySet()) {

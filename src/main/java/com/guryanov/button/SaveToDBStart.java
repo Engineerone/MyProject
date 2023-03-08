@@ -1,6 +1,6 @@
-package com.guryanov.handler;
+package com.guryanov.button;
 
-import com.guryanov.button.SaveToDB;
+import com.guryanov.handler.SaveToDB;
 
 import static com.guryanov.ui.AppFrame.statusString;
 import static com.guryanov.ui.AppFrame.userMessage;

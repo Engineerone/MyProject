@@ -1,4 +1,4 @@
-package com.guryanov.handler;
+package com.guryanov.button;
 
 import static com.guryanov.ui.AppFrame.statusString;
 import static com.guryanov.ui.AppFrame.sendEmailStop;
