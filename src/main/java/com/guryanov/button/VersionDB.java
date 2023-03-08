@@ -9,7 +9,7 @@ import static com.guryanov.ui.AppFrame.userMessage;
 
 public class VersionDB {
 
-    public static void Test(String... connectionData) {
+    public static boolean Test(String... connectionData) {
         try {
             List<String> result = new DatabaseHandler().versionDB(connectionData);
             StringBuffer message = new StringBuffer();
@@ -17,9 +17,10 @@ public class VersionDB {
                 message.append(tempString + "\n");
             }
             userMessage.info(message.toString());
-
+            return true;
         } catch (SQLException ex) {
             userMessage.error(ex);
+            return false;
         }
     }
 }

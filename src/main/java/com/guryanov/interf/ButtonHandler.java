@@ -5,4 +5,5 @@ import java.awt.event.ActionListener;
 
 public interface ButtonHandler extends ActionListener {
     void actionPerformed(ActionEvent e);
+
 }

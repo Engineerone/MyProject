@@ -7,7 +7,7 @@ public class ConfigSetting {
     public static String db_table_columnName = "name";
     public static String db_table_columnEmail = "email";
     public static String db_table_columnSend = "send";
-    public static String db_host = "localhost";
+    public static String db_host = "127.0.0.1";
     public static String db_port = "3306";
     public static String db_user = "root";
     public static String db_secr = "12345";

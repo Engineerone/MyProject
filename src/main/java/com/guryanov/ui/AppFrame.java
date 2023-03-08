@@ -97,8 +97,8 @@ public class AppFrame extends JFrame {
         fileMenu.add(fileOpenMenu);
         fileMenu.addSeparator();
         fileMenu.add(fileExitMenu);
-        fileOpenMenu.addActionListener(e -> new FileMenu().openFile(AppFrame.this));
-        fileExitMenu.addActionListener(e -> new ExitMenu().exit());
+        fileOpenMenu.addActionListener(e -> FileMenu.openFile(AppFrame.this));
+        fileExitMenu.addActionListener(e -> ExitMenu.exit());
         return fileMenu;
     }
 
@@ -210,6 +210,17 @@ public class AppFrame extends JFrame {
             field_db_port.setInputVerifier(new PortFormatVerifier());
             field_email_smtp_port.setInputVerifier(new PortFormatVerifier());
 
+            buttonVersionCheck.addActionListener(e1 -> {
+                boolean connection;
+                connection = VersionDB.Test(
+                        field_db_host.getText().trim(),
+                        field_db_port.getText().trim(),
+                        field_db_user.getText().trim(),
+                        field_db_secr.getText().trim(),
+                        field_dbtype.getSelectedItem().toString());
+                if (connection) checkBox_useWithDB.setSelected(true);
+            });
+
             buttonSave.addActionListener(e1 -> {
                 db_type = (DBType) field_dbtype.getSelectedItem();
                 db_schema = field_db_schema.getText().trim();
@@ -230,12 +241,6 @@ public class AppFrame extends JFrame {
                 ChangeButtonVisible.change();
                 frame.dispose();
             });
-            buttonVersionCheck.addActionListener(e1 -> VersionDB.Test(
-                    field_db_host.getText(),
-                    field_db_port.getText(),
-                    field_db_user.getText(),
-                    field_db_secr.getText(),
-                    field_dbtype.getSelectedItem().toString()));
         });
         return toolMenu;
     }
