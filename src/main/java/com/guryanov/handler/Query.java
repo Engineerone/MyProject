@@ -1,4 +1,4 @@
-package com.guryanov.button;
+package com.guryanov.handler;
 
 import com.guryanov.config.DBType;
 import com.guryanov.interf.SQLQuery;

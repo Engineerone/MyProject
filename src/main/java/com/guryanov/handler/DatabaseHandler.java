@@ -1,6 +1,5 @@
 package com.guryanov.handler;
 
-import com.guryanov.button.Query;
 import com.guryanov.interf.SQLQuery;
 import com.guryanov.config.DBType;
 import com.guryanov.config.ConfigSetting;

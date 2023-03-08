@@ -1,4 +1,4 @@
-package com.guryanov.button;
+package com.guryanov.handler;
 
 import static com.guryanov.ui.AppFrame.saveStop;
 import static com.guryanov.ui.AppFrame.statusString;

@@ -1,4 +1,6 @@
-package com.guryanov.button;
+package com.guryanov.handler;
+
+import com.guryanov.button.SendEmail;
 
 import static com.guryanov.ui.AppFrame.statusString;
 import static com.guryanov.ui.AppFrame.userMessage;

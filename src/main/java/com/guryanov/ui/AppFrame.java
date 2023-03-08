@@ -218,7 +218,11 @@ public class AppFrame extends JFrame {
                         field_db_user.getText().trim(),
                         field_db_secr.getText().trim(),
                         field_dbtype.getSelectedItem().toString());
-                if (connection) checkBox_useWithDB.setSelected(true);
+                if (connection) {
+                    checkBox_useWithDB.setSelected(true);
+                } else {
+                    checkBox_useWithDB.setSelected(false);
+                }
             });
 
             buttonSave.addActionListener(e1 -> {
